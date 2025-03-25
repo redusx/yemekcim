@@ -13,10 +13,10 @@ fun pageNav(mainViewModel: MainPageViewModel){
     val navController= rememberNavController()
     NavHost(navController =navController, startDestination = "mainpage" ){
         composable("mainpage"){
-            mainPage(navController = navController,mainViewModel,paddingValues = PaddingValues())
+            mainPage(navController = navController,mainViewModel)
         }
         composable("profilePage"){
-            profilePage(navController=navController, paddingValues = PaddingValues())
+            profilePage(navController=navController)
         }
     }
 }

@@ -15,7 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 
 @Composable
-fun profilePage(navController: NavController,paddingValues: PaddingValues){
+fun profilePage(navController: NavController){
     Column (modifier = Modifier
         .windowInsetsPadding(WindowInsets.statusBars)
         .fillMaxSize(),

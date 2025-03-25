@@ -42,6 +42,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -71,29 +72,18 @@ import javax.annotation.meta.When
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun mainPage(navController: NavController,mainViewModel: MainPageViewModel,paddingValues: PaddingValues) {
+fun mainPage(navController: NavController,mainViewModel: MainPageViewModel) {
     val yemekListesi = mainViewModel.yemeklerListesi.observeAsState(listOf())
     var user_name="Rıza"
     var query = remember { mutableStateOf("") }
     val buttonLabels = listOf("Popüler", "Yemekler", "İçecekler", "Tatlılar", "Dondurma")
     var filterButton= remember { mutableStateOf("0") }
-    var selectedIndex = remember { mutableStateOf(0) }
 
 
     LaunchedEffect(key1 = true) {
         mainViewModel.getYemekler()
-    }
 
-    val item:List<NavigationItem> = listOf(
-        NavigationItem(
-            selectedİcon =Icons.Filled.Home,
-            unselectedİcon = Icons.Outlined.Home
-        ),
-        NavigationItem(
-            selectedİcon = Icons.Filled.Person,
-            unselectedİcon = Icons.Outlined.Person
-        )
-    )
+    }
 
 
     @Composable
@@ -111,31 +101,9 @@ fun mainPage(navController: NavController,mainViewModel: MainPageViewModel,paddi
     }
 
 
-    Scaffold (
-        bottomBar = {
-            NavigationBar {
-                item.forEachIndexed { index, navigationİtem ->
-                    NavigationBarItem(
-                        selected = selectedIndex.value==index,
-                        onClick = {selectedIndex.value=index},
-                        icon ={
-                    if (selectedIndex.value==index){
-                        Icon(imageVector = navigationİtem.selectedİcon, contentDescription = "selectedIcon")
-                    }else{
-                        Icon(imageVector = navigationİtem.unselectedİcon, contentDescription = "unselectedIcon")
-                    }
-                        })
-                }
-            }
-        },
-        content ={paddingValues->
-            when(selectedIndex.value){
-                0-> mainPage(navController, mainViewModel,paddingValues)
-                1-> profilePage(navController,paddingValues)
-            }
-        }
 
-    )
+
+
     Column (
            modifier = Modifier
                .windowInsetsPadding(WindowInsets.statusBars)
@@ -319,18 +287,21 @@ fun mainPage(navController: NavController,mainViewModel: MainPageViewModel,paddi
                                 2 -> YemekItem("izgaratavuk.png")
                                 3 -> YemekItem("lazanya.png")
                                 4 -> YemekItem("makarna.png")
-                                5 -> YemekItem("pizza.png")}
+                                5 -> YemekItem("pizza.png")
+                            }
                             "2" -> when(index){
                                 0 -> YemekItem("ayran.png")
                                 1 -> YemekItem("fanta.png")
                                 2 -> YemekItem("kahve.png")
-                                3 -> YemekItem("su.png")}
+                                3 -> YemekItem("su.png")
+                            }
 
                             "3" -> when(index){
                                 0 -> YemekItem("baklava.png")
                                 1 -> YemekItem("kadayif.png")
                                 2 -> YemekItem("sutlac.png")
-                                3 -> YemekItem("tiramisu.png")}
+                                3 -> YemekItem("tiramisu.png")
+                            }
                             "4" -> 0
                             else -> 0
                         }

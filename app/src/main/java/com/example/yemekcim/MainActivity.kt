@@ -5,8 +5,10 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.compose.ui.Modifier
 import com.example.yemekcim.ui.theme.YemekcimTheme
 import com.example.yemekcim.uix.viewModel.MainPageViewModel
+import com.example.yemekcim.uix.views.BottomBar
 import com.example.yemekcim.uix.views.pageNav
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -18,7 +20,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             YemekcimTheme {
-                pageNav(mainPVM)
+                BottomBar(modifier = Modifier,mainPageViewModel = mainPVM)
             }
         }
     }
