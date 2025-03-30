@@ -18,5 +18,9 @@ fun pageNav(mainViewModel: MainPageViewModel){
         composable("profilePage"){
             profilePage(navController=navController)
         }
+        composable("cartPage"){
+            CartPage(navController = navController)
+        }
+
     }
 }

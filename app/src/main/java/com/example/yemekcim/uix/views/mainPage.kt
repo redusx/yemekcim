@@ -12,9 +12,11 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
@@ -76,8 +78,10 @@ fun mainPage(navController: NavController,mainViewModel: MainPageViewModel) {
     val yemekListesi = mainViewModel.yemeklerListesi.observeAsState(listOf())
     var user_name="Rıza"
     var query = remember { mutableStateOf("") }
-    val buttonLabels = listOf("Popüler", "Yemekler", "İçecekler", "Tatlılar", "Dondurma")
+    val buttonLabels = listOf("Popüler", "Yemekler", "İçecekler", "Tatlılar", "Dondurmalar")
     var filterButton= remember { mutableStateOf("0") }
+    val seciliKategoriYemekler = mainViewModel.kategoriyeGoreYemekler[filterButton.value] ?: listOf()
+    var contextName=buttonLabels[filterButton.value.toInt()]
 
 
     LaunchedEffect(key1 = true) {
@@ -85,58 +89,14 @@ fun mainPage(navController: NavController,mainViewModel: MainPageViewModel) {
 
     }
 
-
-    @Composable
-    fun YemekItem(yemek_resim_adi:String) {
-        val BASE_URL = "http://kasimadalan.pe.hu/yemekler/resimler/"
-        val resimUrl = "$BASE_URL${yemek_resim_adi}"
-
-        Image(
-            painter = rememberAsyncImagePainter(resimUrl),
-            contentDescription = yemek_resim_adi,
-            modifier = Modifier
-                .size(100.dp,250.dp)
-                .clip(RoundedCornerShape(10.dp))
-        )
-    }
-
-
-
-
-
     Column (
            modifier = Modifier
-               .windowInsetsPadding(WindowInsets.statusBars)
+               .windowInsetsPadding(WindowInsets.statusBars).windowInsetsPadding(WindowInsets.navigationBars)
                .fillMaxSize(),
            verticalArrangement = Arrangement.Top,
            horizontalAlignment = Alignment.CenterHorizontally
            ){
-//           Row (modifier = Modifier.fillMaxWidth(),
-//               verticalAlignment = Alignment.CenterVertically,
-//               horizontalArrangement = Arrangement.SpaceBetween){
-//                 IconButton(
-//                     onClick = {},
-//                     modifier = Modifier
-//                         .size(58.dp)
-//                         .padding(start = 10.dp))
-//                 {
-//                     Icon(
-//                         painter = painterResource(id = R.drawable.baseline_account_box_24),
-//                         contentDescription = "Profile Button",
-//                         modifier = Modifier.size(58.dp).padding(end = 2.dp)
-//                     )
-//                 }
-//                 IconButton(
-//                     onClick = {},
-//                     modifier = Modifier.size(58.dp).padding(end = 10.dp))
-//                 {
-//                     Image(painter = painterResource(R.drawable.shopping_cart),
-//                         contentDescription = "Shopping Cart",
-//                         modifier = Modifier.size(58.dp)
-//                         )
-//                 }
-//
-//           }
+
           Row (modifier = Modifier.fillMaxWidth(),
               verticalAlignment = Alignment.CenterVertically,
               ){
@@ -230,19 +190,19 @@ fun mainPage(navController: NavController,mainViewModel: MainPageViewModel) {
         Row(
             modifier = Modifier.fillMaxWidth().padding(start = 10.dp)){
             Text(
-                text = "Popüler Yiyecekler",
+                text = "$contextName",
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold,)
         }
-        //Log.e("liste",yemekListesi.value.toString())
+
+
         Box(
             modifier = Modifier.fillMaxWidth()
         ){
             LazyVerticalGrid(
-                modifier = Modifier.fillMaxSize().padding(start = 10.dp),
+                modifier = Modifier.fillMaxSize().padding(start = 10.dp, bottom = 56.dp),
                 columns = GridCells.Fixed(2),
-                horizontalArrangement = Arrangement.SpaceEvenly,
-
+                horizontalArrangement = Arrangement.SpaceEvenly
             ) {
                 items(
                     when (filterButton.value)
@@ -257,56 +217,14 @@ fun mainPage(navController: NavController,mainViewModel: MainPageViewModel) {
                 )
                 {index ->
 
-
                     IconButton(
                         onClick = {},
                         modifier = Modifier.size(100.dp,250.dp).padding(
                             end = 10.dp, bottom = 10.dp, top = 10.dp),
                     ) {
-                        when (filterButton.value)
-                        {
-                            "0" -> when(index){
-                                0 -> YemekItem("kofte.png")
-                                1 -> YemekItem("ayran.png")
-                                2 -> YemekItem("baklava.png")
-                                3 -> YemekItem("fanta.png")
-                                4 -> YemekItem("izgarasomon.png")
-                                5 -> YemekItem("izgaratavuk.png")
-                                6 -> YemekItem("kadayif.png")
-                                7 -> YemekItem("kahve.png")
-                                8 -> YemekItem("lazanya.png")
-                                9 -> YemekItem("makarna.png")
-                                10 -> YemekItem("pizza.png")
-                                11 -> YemekItem("su.png")
-                                12 -> YemekItem("sutlac.png")
-                                13 -> YemekItem("tiramisu.png")
-                            }
-                            "1" -> when(index){
-                                0 -> YemekItem("kofte.png")
-                                1 -> YemekItem("izgarasomon.png")
-                                2 -> YemekItem("izgaratavuk.png")
-                                3 -> YemekItem("lazanya.png")
-                                4 -> YemekItem("makarna.png")
-                                5 -> YemekItem("pizza.png")
-                            }
-                            "2" -> when(index){
-                                0 -> YemekItem("ayran.png")
-                                1 -> YemekItem("fanta.png")
-                                2 -> YemekItem("kahve.png")
-                                3 -> YemekItem("su.png")
-                            }
 
-                            "3" -> when(index){
-                                0 -> YemekItem("baklava.png")
-                                1 -> YemekItem("kadayif.png")
-                                2 -> YemekItem("sutlac.png")
-                                3 -> YemekItem("tiramisu.png")
-                            }
-                            "4" -> 0
-                            else -> 0
-                        }
+                        mainViewModel.YemekItem(yemek_resim_adi = seciliKategoriYemekler[index])
                     }
-
                 }
             }
         }

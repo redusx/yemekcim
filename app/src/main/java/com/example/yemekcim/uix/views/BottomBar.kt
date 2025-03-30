@@ -1,9 +1,14 @@
 package com.example.yemekcim.uix.views
 
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AddShoppingCart
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.outlined.AddShoppingCart
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material3.Icon
@@ -31,9 +36,14 @@ fun BottomBar(modifier: Modifier=Modifier,mainPageViewModel: MainPageViewModel){
             unselectedİcon = Icons.Outlined.Home
         ),
         NavigationItem(
+            selectedİcon = Icons.Filled.AddShoppingCart,
+            unselectedİcon = Icons.Outlined.AddShoppingCart
+        ),
+        NavigationItem(
             selectedİcon = Icons.Filled.Person,
             unselectedİcon = Icons.Outlined.Person
         )
+
     )
 
     Scaffold (
@@ -69,7 +79,8 @@ fun ContentScreen(modifier: Modifier=Modifier,
 
     when(selectedIndex){
         0 -> mainPage(mainViewModel = mainPageViewModel,navController = navController)
-        1 -> profilePage(navController = navController)
+        1 -> CartPage(navController = navController)
+        2 -> profilePage(navController = navController)
 
     }
 }
