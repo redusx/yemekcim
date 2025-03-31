@@ -2,6 +2,8 @@ package com.example.yemekcim.uix.views
 
 import android.util.Log
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -39,6 +41,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.livedata.observeAsState
@@ -200,7 +203,9 @@ fun mainPage(navController: NavController,mainViewModel: MainPageViewModel) {
             modifier = Modifier.fillMaxWidth()
         ){
             LazyVerticalGrid(
-                modifier = Modifier.fillMaxSize().padding(start = 10.dp, bottom = 56.dp),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(start = 10.dp, bottom = 56.dp),
                 columns = GridCells.Fixed(2),
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
@@ -217,13 +222,26 @@ fun mainPage(navController: NavController,mainViewModel: MainPageViewModel) {
                 )
                 {index ->
 
-                    IconButton(
-                        onClick = {},
-                        modifier = Modifier.size(100.dp,250.dp).padding(
-                            end = 10.dp, bottom = 10.dp, top = 10.dp),
+                    Box(
+                        modifier = Modifier
+                            .size(100.dp, 250.dp)
+                            .padding(end = 10.dp, bottom = 8.dp, top = 10.dp)
+                            .background(Color(0x80F1F1F1), RoundedCornerShape(10.dp))
                     ) {
+                        IconButton(
+                            onClick = {},
+                            modifier = Modifier.fillMaxSize()
+                        ) {
+                            mainViewModel.YemekItem(yemek_resim_adi = seciliKategoriYemekler[index])
+                        }
+                        Box(
+                            modifier = Modifier
+                                .size(100.dp, 50.dp)
+                                .padding(top = 200.dp)
+                                .background(Color(0xFFF1F1F1), RoundedCornerShape(10.dp))
+                        ){
 
-                        mainViewModel.YemekItem(yemek_resim_adi = seciliKategoriYemekler[index])
+                        }
                     }
                 }
             }

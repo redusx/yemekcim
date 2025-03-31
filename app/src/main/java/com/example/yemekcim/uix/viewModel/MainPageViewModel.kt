@@ -2,6 +2,7 @@ package com.example.yemekcim.uix.viewModel
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -67,9 +68,10 @@ class MainPageViewModel @Inject constructor(private val yrepo: YemeklerRepositor
                     "izgaratavuk.png" -> "Izgara Tavuk"
                     else -> yemek_resim_adi.replaceFirstChar { it.uppercaseChar() }.dropLast(4)
                 },
+                modifier = Modifier.align(Alignment.Start),
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Center
+
             )
         }
     }
