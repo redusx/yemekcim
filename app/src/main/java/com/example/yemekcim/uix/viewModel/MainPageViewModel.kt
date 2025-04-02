@@ -59,20 +59,20 @@ class MainPageViewModel @Inject constructor(private val yrepo: YemeklerRepositor
                     .size(100.dp, 150.dp)
                     .clip(RoundedCornerShape(10.dp))
             )
-            Text(
-                text = when(yemek_resim_adi){
-                    "kofte.png" -> "Köfte"
-                    "izgarasomon.png" -> "Izgara Somon"
-                    "kadayif.png" -> "Kadayıf"
-                    "sutlac.png" -> "Sütlaç"
-                    "izgaratavuk.png" -> "Izgara Tavuk"
-                    else -> yemek_resim_adi.replaceFirstChar { it.uppercaseChar() }.dropLast(4)
-                },
-                modifier = Modifier.align(Alignment.Start),
-                fontSize = 14.sp,
-                fontWeight = FontWeight.Bold,
-
-            )
+//            Text(
+//                text = when(yemek_resim_adi){
+//                    "kofte.png" -> "Köfte"
+//                    "izgarasomon.png" -> "Izgara Somon"
+//                    "kadayif.png" -> "Kadayıf"
+//                    "sutlac.png" -> "Sütlaç"
+//                    "izgaratavuk.png" -> "Izgara Tavuk"
+//                    else -> yemek_resim_adi.replaceFirstChar { it.uppercaseChar() }.dropLast(4)
+//                },
+//                modifier = Modifier.align(Alignment.Start),
+//                fontSize = 14.sp,
+//                fontWeight = FontWeight.Bold,
+//
+//            )
         }
     }
 

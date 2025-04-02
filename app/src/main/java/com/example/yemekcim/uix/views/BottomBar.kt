@@ -78,9 +78,9 @@ fun ContentScreen(modifier: Modifier=Modifier,
     val navController= rememberNavController()
 
     when(selectedIndex){
-        0 -> mainPage(mainViewModel = mainPageViewModel,navController = navController)
+        0 -> MainPage(mainViewModel = mainPageViewModel,navController = navController)
         1 -> CartPage(navController = navController)
-        2 -> profilePage(navController = navController)
+        2 -> ProfilePage(navController = navController)
 
     }
 }

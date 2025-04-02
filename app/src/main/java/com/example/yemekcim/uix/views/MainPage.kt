@@ -1,9 +1,5 @@
 package com.example.yemekcim.uix.views
 
-import android.util.Log
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,6 +7,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -18,36 +15,30 @@ import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
-import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.outlined.Home
-import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.Scaffold
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -59,33 +50,24 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
-import coil.compose.rememberAsyncImagePainter
 import com.example.yemekcim.R
-import com.example.yemekcim.data.datasource.YemeklerDataSource
-import com.example.yemekcim.data.entity.NavigationItem
-import com.example.yemekcim.data.entity.Yemekler
-import com.example.yemekcim.data.repo.YemeklerRepository
-import com.example.yemekcim.retrofit.YemeklerDao
 import com.example.yemekcim.uix.viewModel.MainPageViewModel
-import javax.annotation.meta.When
+
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun mainPage(navController: NavController,mainViewModel: MainPageViewModel) {
+fun MainPage(navController: NavController,mainViewModel: MainPageViewModel) {
     val yemekListesi = mainViewModel.yemeklerListesi.observeAsState(listOf())
-    var user_name="Rıza"
+    val userName="Rıza"
     var query = remember { mutableStateOf("") }
     val buttonLabels = listOf("Popüler", "Yemekler", "İçecekler", "Tatlılar", "Dondurmalar")
     var filterButton= remember { mutableStateOf("0") }
     val seciliKategoriYemekler = mainViewModel.kategoriyeGoreYemekler[filterButton.value] ?: listOf()
     var contextName=buttonLabels[filterButton.value.toInt()]
-
 
     LaunchedEffect(key1 = true) {
         mainViewModel.getYemekler()
@@ -104,7 +86,7 @@ fun mainPage(navController: NavController,mainViewModel: MainPageViewModel) {
               verticalAlignment = Alignment.CenterVertically,
               ){
               Text(
-                  text = "Merhaba, $user_name!",
+                  text = "Merhaba, $userName!",
                   modifier = Modifier
                       .padding(start = 10.dp)
                       .graphicsLayer(alpha = 0.5f)
@@ -200,18 +182,16 @@ fun mainPage(navController: NavController,mainViewModel: MainPageViewModel) {
 
 
         Box(
-            modifier = Modifier.fillMaxWidth()
-        ){
+            modifier = Modifier.fillMaxWidth().padding(top = 4.dp,start = 10.dp,end = 10.dp, bottom = 56.dp)
+        ) {
             LazyVerticalGrid(
                 modifier = Modifier
-                    .fillMaxSize()
-                    .padding(start = 10.dp, bottom = 56.dp),
+                    .fillMaxSize(),
                 columns = GridCells.Fixed(2),
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
                 items(
-                    when (filterButton.value)
-                    {
+                    when (filterButton.value) {
                         "0" -> yemekListesi.value.size
                         "1" -> 6
                         "2" -> 4
@@ -219,28 +199,68 @@ fun mainPage(navController: NavController,mainViewModel: MainPageViewModel) {
                         "4" -> 0
                         else -> 0
                     }
-                )
-                {index ->
+                ) { index ->
+                    val endPadding= if(index%2==0) 10.dp else 0.dp
 
-                    Box(
+                    Card(
                         modifier = Modifier
-                            .size(100.dp, 250.dp)
-                            .padding(end = 10.dp, bottom = 8.dp, top = 10.dp)
-                            .background(Color(0x80F1F1F1), RoundedCornerShape(10.dp))
+                            .fillMaxWidth()
+                            .padding(bottom =10.dp, end = endPadding),
+                        shape = RoundedCornerShape(10.dp),
+                        elevation = CardDefaults.elevatedCardElevation(defaultElevation = 4.dp)
                     ) {
-                        IconButton(
-                            onClick = {},
-                            modifier = Modifier.fillMaxSize()
-                        ) {
-                            mainViewModel.YemekItem(yemek_resim_adi = seciliKategoriYemekler[index])
-                        }
-                        Box(
+                        Column(
                             modifier = Modifier
-                                .size(100.dp, 50.dp)
-                                .padding(top = 200.dp)
-                                .background(Color(0xFFF1F1F1), RoundedCornerShape(10.dp))
-                        ){
+                                .fillMaxWidth()
+                                .padding(8.dp)
+                        ) {
+                            // Yemek Resmi ve İsmi
+                            Column(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                mainViewModel.YemekItem(yemek_resim_adi = seciliKategoriYemekler[index])
+                                Text(
+                                    text = when(seciliKategoriYemekler[index]){
+                                        "kofte.png" -> "Köfte"
+                                        "izgarasomon.png" -> "Izgara Somon"
+                                        "kadayif.png" -> "Kadayıf"
+                                        "sutlac.png" -> "Sütlaç"
+                                        "izgaratavuk.png" -> "Izgara Tavuk"
+                                        else -> seciliKategoriYemekler[index].replaceFirstChar { it.uppercaseChar() }.dropLast(4)
+                                    },
+                                    modifier = Modifier.align(Alignment.Start),
+                                    fontSize = 14.sp,
+                                    fontWeight = FontWeight.Bold,
 
+                                    )
+                            }
+                            // Fiyat ve Sepete Ekle Butonu
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 8.dp, vertical = 4.dp),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    modifier = Modifier.fillMaxHeight().padding(start = 4.dp, top = 2.dp, bottom = 2.dp),
+                                    text = "₺29.99",
+                                    style = MaterialTheme.typography.bodyLarge,
+                                    color = Color.Black
+                                )
+                                Spacer(modifier = Modifier.width(20.dp))
+                                Button(
+                                    onClick = { /* Sepete ekle işlemi */ },
+                                    modifier = Modifier
+                                        .fillMaxHeight()
+                                        .padding(top = 2.dp, bottom = 2.dp, end = 4.dp),
+                                    colors = ButtonDefaults.buttonColors(containerColor = Color.Green),
+                                    shape = RoundedCornerShape(10.dp)
+                                ) {
+                                    Text(text = "Sepete Ekle", color = Color.White)
+                                }
+                            }
                         }
                     }
                 }
@@ -249,11 +269,3 @@ fun mainPage(navController: NavController,mainViewModel: MainPageViewModel) {
 
     }
 }
-
-//@Preview(showBackground = true)
-//@Composable
-//fun mainPagePreview() {
-//     val navController= rememberNavController()
-//     val mainViewModel=MainPageViewModel(yrepo = YemeklerRepository(YemeklerDataSource(YemeklerDao)))
-//    mainPage(navController,mainViewModel)
-//}
