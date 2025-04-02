@@ -1,14 +1,11 @@
 package com.example.yemekcim.uix.views
 
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AddShoppingCart
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.outlined.AddShoppingCart
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material3.Icon
@@ -21,6 +18,9 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
+import com.example.yemekcim.R
 import androidx.navigation.compose.rememberNavController
 import com.example.yemekcim.data.entity.NavigationItem
 import com.example.yemekcim.uix.viewModel.MainPageViewModel
@@ -32,16 +32,16 @@ fun BottomBar(modifier: Modifier=Modifier,mainPageViewModel: MainPageViewModel){
 
     val item:List<NavigationItem> = listOf(
         NavigationItem(
-            selectedİcon =Icons.Filled.Home,
-            unselectedİcon = Icons.Outlined.Home
+            selectedVectorIcon =Icons.Filled.Home,
+            unselectedVectorIcon = Icons.Outlined.Home
         ),
         NavigationItem(
-            selectedİcon = Icons.Filled.AddShoppingCart,
-            unselectedİcon = Icons.Outlined.AddShoppingCart
+            selectedPainterIcon = painterResource(id = R.drawable.cart),
+            unselectedPainterIcon = painterResource(id = R.drawable.cartunselected)
         ),
         NavigationItem(
-            selectedİcon = Icons.Filled.Person,
-            unselectedİcon = Icons.Outlined.Person
+            selectedVectorIcon = Icons.Filled.Person,
+            unselectedVectorIcon = Icons.Outlined.Person
         )
 
     )
@@ -55,9 +55,17 @@ fun BottomBar(modifier: Modifier=Modifier,mainPageViewModel: MainPageViewModel){
                         onClick = {selectedIndex=index},
                         icon ={
                             if (selectedIndex==index){
-                                Icon(imageVector = navigationItem.selectedİcon, contentDescription = "selectedIcon")
+                                navigationItem.selectedVectorIcon?.let {
+                                    Icon(imageVector = it, contentDescription = "Selected Icon", modifier = Modifier.size(36.dp))
+                                } ?: navigationItem.selectedPainterIcon?.let {
+                                    Image(painter = it, contentDescription = "Selected Icon", modifier = Modifier.size(36.dp))
+                                }
                             }else{
-                                Icon(imageVector = navigationItem.unselectedİcon, contentDescription = "unselectedIcon")
+                                navigationItem.unselectedVectorIcon?.let {
+                                    Icon(imageVector = it, contentDescription = "Unselected Icon", modifier = Modifier.size(36.dp))
+                                } ?: navigationItem.unselectedPainterIcon?.let {
+                                    Image(painter = it, contentDescription = "Unselected Icon", modifier = Modifier.size(36.dp))
+                                }
                             }
                         })
                 }

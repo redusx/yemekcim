@@ -1,8 +1,11 @@
 package com.example.yemekcim.data.entity
 
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
 
 data class NavigationItem(
-    val selectedİcon:ImageVector,
-    val unselectedİcon:ImageVector
+    val selectedVectorIcon: ImageVector? = null,
+    val unselectedVectorIcon: ImageVector? = null,
+    val selectedPainterIcon: Painter? = null,
+    val unselectedPainterIcon: Painter? = null
 )

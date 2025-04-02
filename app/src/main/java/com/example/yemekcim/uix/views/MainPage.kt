@@ -1,5 +1,6 @@
 package com.example.yemekcim.uix.views
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -7,7 +8,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -78,7 +77,8 @@ fun MainPage(navController: NavController,mainViewModel: MainPageViewModel) {
 
     Column (
            modifier = Modifier
-               .windowInsetsPadding(WindowInsets.statusBars).windowInsetsPadding(WindowInsets.navigationBars)
+               .windowInsetsPadding(WindowInsets.statusBars)
+               .windowInsetsPadding(WindowInsets.navigationBars)
                .fillMaxSize(),
            verticalArrangement = Arrangement.Top,
            horizontalAlignment = Alignment.CenterHorizontally
@@ -94,7 +94,9 @@ fun MainPage(navController: NavController,mainViewModel: MainPageViewModel) {
                       .graphicsLayer(alpha = 0.5f)
               )
           }
-         Row (modifier = Modifier.fillMaxWidth().padding(top =2.dp),
+         Row (modifier = Modifier
+             .fillMaxWidth()
+             .padding(top = 2.dp),
              verticalAlignment = Alignment.CenterVertically,
          ){
              Text(
@@ -124,12 +126,15 @@ fun MainPage(navController: NavController,mainViewModel: MainPageViewModel) {
                 unfocusedIndicatorColor = Color.White
             )
         )
-        Box(modifier = Modifier.fillMaxWidth().padding(bottom = 0.dp)) {
+        Box(modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 0.dp)) {
             LazyHorizontalGrid(
                 rows = GridCells.Fixed(1),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(150.dp).padding(start = 10.dp, bottom = 0.dp),
+                    .height(150.dp)
+                    .padding(start = 10.dp, bottom = 0.dp),
                 contentPadding = PaddingValues(0.dp)
             ) {
                 items(buttonLabels.size) { index ->
@@ -175,7 +180,9 @@ fun MainPage(navController: NavController,mainViewModel: MainPageViewModel) {
             }
         }
         Row(
-            modifier = Modifier.fillMaxWidth().padding(start = 10.dp)){
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 10.dp)){
             Text(
                 text = "$contextName",
                 fontSize = 24.sp,
@@ -184,7 +191,9 @@ fun MainPage(navController: NavController,mainViewModel: MainPageViewModel) {
 
 
         Box(
-            modifier = Modifier.fillMaxWidth().padding(top = 4.dp, start = 10.dp, end = 10.dp, bottom = 56.dp)
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(top = 4.dp, start = 10.dp, end = 10.dp, bottom = 56.dp)
         ) {
             LazyVerticalGrid(
                 modifier = Modifier.fillMaxSize(),
@@ -205,10 +214,11 @@ fun MainPage(navController: NavController,mainViewModel: MainPageViewModel) {
                     Card(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(210.dp)
-                            .padding(bottom = 10.dp),
+                            .height(250.dp)
+                            .padding(bottom = 10.dp)
+                            .background(Color(0x40F1F1F1)),
                         shape = RoundedCornerShape(10.dp),
-                        elevation = CardDefaults.elevatedCardElevation(defaultElevation = 4.dp),
+                        elevation = CardDefaults.elevatedCardElevation(defaultElevation = 4.dp)
                     ) {
                         Column(
                             modifier = Modifier.fillMaxSize(),
@@ -234,47 +244,44 @@ fun MainPage(navController: NavController,mainViewModel: MainPageViewModel) {
                                     "izgaratavuk.png" -> "Izgara Tavuk"
                                     else -> seciliKategoriYemekler[index].replaceFirstChar { it.uppercaseChar() }.dropLast(4)
                                 },
-                                fontSize = 14.sp,
+                                fontSize = 15.sp,
                                 fontWeight = FontWeight.Bold,
-                                modifier = Modifier.align(Alignment.Start).padding(start = 4.dp)
+                                modifier = Modifier
+                                    .align(Alignment.Start)
+                                    .padding(start = 4.dp)
                             )
 
                             // Fiyat ve Buton
                             Row(
                                 modifier = Modifier
                                     .fillMaxWidth(),
-                                horizontalArrangement = Arrangement.Start,
+                                horizontalArrangement = Arrangement.SpaceBetween,
                                 verticalAlignment = Alignment.CenterVertically
-
                             ) {
                                 Text(
                                     text = "279.99 TL",
                                     style = MaterialTheme.typography.bodyLarge,
                                     color = Color.Black,
                                     modifier = Modifier
-                                        .weight(1f)
-                                        .padding(start = 2.dp, bottom = 4.dp, top = 4.dp),
+                                        .padding(start = 4.dp),
                                     fontSize = 15.sp
                                 )
 
                                 Button(
                                     onClick = { /* Sepete ekle işlemi */ },
                                     modifier = Modifier
-                                        .padding(end = 4.dp, bottom = 4.dp, top = 4.dp)
+                                        .padding(end = 4.dp)
                                         .widthIn(min = 20.dp, max = 100.dp)
-                                        .weight(1f),
-                                    colors = ButtonDefaults.buttonColors(containerColor = Color.Green,contentColor = Color.Black),
+                                    ,colors = ButtonDefaults.buttonColors(containerColor = Color.Green,contentColor = Color.Black),
                                     shape = RoundedCornerShape(8.dp)
                                 ) {
                                     Text(
                                         text = "Sepete Ekle",
                                         color = Color.Black,
-                                        fontSize = 20.sp,
+                                        fontSize = 9.sp,
                                         maxLines = 1,
-                                        overflow = TextOverflow.Ellipsis,
-                                        textAlign = TextAlign.Center,
-                                        modifier = Modifier.fillMaxWidth()
-                                    )
+                                        overflow = TextOverflow.Ellipsis
+                                     )
                                 }
                             }
                         }
