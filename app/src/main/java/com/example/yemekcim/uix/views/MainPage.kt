@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
@@ -50,6 +51,7 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -182,13 +184,12 @@ fun MainPage(navController: NavController,mainViewModel: MainPageViewModel) {
 
 
         Box(
-            modifier = Modifier.fillMaxWidth().padding(top = 4.dp,start = 10.dp,end = 10.dp, bottom = 56.dp)
+            modifier = Modifier.fillMaxWidth().padding(top = 4.dp, start = 10.dp, end = 10.dp, bottom = 56.dp)
         ) {
             LazyVerticalGrid(
-                modifier = Modifier
-                    .fillMaxSize(),
+                modifier = Modifier.fillMaxSize(),
                 columns = GridCells.Fixed(2),
-                horizontalArrangement = Arrangement.SpaceEvenly
+                horizontalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 items(
                     when (filterButton.value) {
@@ -200,65 +201,80 @@ fun MainPage(navController: NavController,mainViewModel: MainPageViewModel) {
                         else -> 0
                     }
                 ) { index ->
-                    val endPadding= if(index%2==0) 10.dp else 0.dp
 
                     Card(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(bottom =10.dp, end = endPadding),
+                            .height(210.dp)
+                            .padding(bottom = 10.dp),
                         shape = RoundedCornerShape(10.dp),
-                        elevation = CardDefaults.elevatedCardElevation(defaultElevation = 4.dp)
+                        elevation = CardDefaults.elevatedCardElevation(defaultElevation = 4.dp),
                     ) {
                         Column(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(8.dp)
+                            modifier = Modifier.fillMaxSize(),
+                            horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-                            // Yemek Resmi ve İsmi
-                            Column(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalAlignment = Alignment.CenterHorizontally
+                            // Yemek Resmi
+                            Box(
+                                modifier = Modifier
+                                    .size(150.dp)
+                                    .padding(top = 8.dp),
+                                contentAlignment = Alignment.Center
                             ) {
                                 mainViewModel.YemekItem(yemek_resim_adi = seciliKategoriYemekler[index])
-                                Text(
-                                    text = when(seciliKategoriYemekler[index]){
-                                        "kofte.png" -> "Köfte"
-                                        "izgarasomon.png" -> "Izgara Somon"
-                                        "kadayif.png" -> "Kadayıf"
-                                        "sutlac.png" -> "Sütlaç"
-                                        "izgaratavuk.png" -> "Izgara Tavuk"
-                                        else -> seciliKategoriYemekler[index].replaceFirstChar { it.uppercaseChar() }.dropLast(4)
-                                    },
-                                    modifier = Modifier.align(Alignment.Start),
-                                    fontSize = 14.sp,
-                                    fontWeight = FontWeight.Bold,
-
-                                    )
                             }
-                            // Fiyat ve Sepete Ekle Butonu
+
+                            // Yemek İsmi
+                            Text(
+                                text = when(seciliKategoriYemekler[index]) {
+                                    "kofte.png" -> "Köfte"
+                                    "izgarasomon.png" -> "Izgara Somon"
+                                    "kadayif.png" -> "Kadayıf"
+                                    "sutlac.png" -> "Sütlaç"
+                                    "izgaratavuk.png" -> "Izgara Tavuk"
+                                    else -> seciliKategoriYemekler[index].replaceFirstChar { it.uppercaseChar() }.dropLast(4)
+                                },
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.Bold,
+                                modifier = Modifier.align(Alignment.Start).padding(start = 4.dp)
+                            )
+
+                            // Fiyat ve Buton
                             Row(
                                 modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(horizontal = 8.dp, vertical = 4.dp),
-                                horizontalArrangement = Arrangement.SpaceBetween,
+                                    .fillMaxWidth(),
+                                horizontalArrangement = Arrangement.Start,
                                 verticalAlignment = Alignment.CenterVertically
+
                             ) {
                                 Text(
-                                    modifier = Modifier.fillMaxHeight().padding(start = 4.dp, top = 2.dp, bottom = 2.dp),
-                                    text = "₺29.99",
+                                    text = "279.99 TL",
                                     style = MaterialTheme.typography.bodyLarge,
-                                    color = Color.Black
+                                    color = Color.Black,
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .padding(start = 2.dp, bottom = 4.dp, top = 4.dp),
+                                    fontSize = 15.sp
                                 )
-                                Spacer(modifier = Modifier.width(20.dp))
+
                                 Button(
                                     onClick = { /* Sepete ekle işlemi */ },
                                     modifier = Modifier
-                                        .fillMaxHeight()
-                                        .padding(top = 2.dp, bottom = 2.dp, end = 4.dp),
-                                    colors = ButtonDefaults.buttonColors(containerColor = Color.Green),
-                                    shape = RoundedCornerShape(10.dp)
+                                        .padding(end = 4.dp, bottom = 4.dp, top = 4.dp)
+                                        .widthIn(min = 20.dp, max = 100.dp)
+                                        .weight(1f),
+                                    colors = ButtonDefaults.buttonColors(containerColor = Color.Green,contentColor = Color.Black),
+                                    shape = RoundedCornerShape(8.dp)
                                 ) {
-                                    Text(text = "Sepete Ekle", color = Color.White)
+                                    Text(
+                                        text = "Sepete Ekle",
+                                        color = Color.Black,
+                                        fontSize = 20.sp,
+                                        maxLines = 1,
+                                        overflow = TextOverflow.Ellipsis,
+                                        textAlign = TextAlign.Center,
+                                        modifier = Modifier.fillMaxWidth()
+                                    )
                                 }
                             }
                         }
@@ -266,6 +282,5 @@ fun MainPage(navController: NavController,mainViewModel: MainPageViewModel) {
                 }
             }
         }
-
     }
 }
