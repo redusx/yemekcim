@@ -1,24 +1,21 @@
 package com.example.yemekcim.uix.viewModel
 
+import android.content.Context
+import android.net.ConnectivityManager
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import coil.compose.rememberAsyncImagePainter
+import coil.request.ImageRequest
+import com.example.yemekcim.R
 import com.example.yemekcim.data.entity.Yemekler
 import com.example.yemekcim.data.repo.YemeklerRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -37,42 +34,6 @@ class MainPageViewModel @Inject constructor(private val yrepo: YemeklerRepositor
     fun getYemekler() {
         CoroutineScope(Dispatchers.Main).launch{
             yemeklerListesi.value = yrepo.tumYemekleriGetir()
-        }
-    }
-
-    @Composable
-    fun YemekItem(yemek_resim_adi:String) {
-        val BASE_URL = "http://kasimadalan.pe.hu/yemekler/resimler/"
-        val resimUrl = "$BASE_URL${yemek_resim_adi}"
-
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier
-                .size(120.dp, 260.dp)
-                .padding(8.dp)
-                .clip(RoundedCornerShape(10.dp))
-        ) {
-            Image(
-                painter = rememberAsyncImagePainter(resimUrl),
-                contentDescription = yemek_resim_adi,
-                modifier = Modifier
-                    .size(100.dp, 150.dp)
-                    .clip(RoundedCornerShape(10.dp))
-            )
-//            Text(
-//                text = when(yemek_resim_adi){
-//                    "kofte.png" -> "Köfte"
-//                    "izgarasomon.png" -> "Izgara Somon"
-//                    "kadayif.png" -> "Kadayıf"
-//                    "sutlac.png" -> "Sütlaç"
-//                    "izgaratavuk.png" -> "Izgara Tavuk"
-//                    else -> yemek_resim_adi.replaceFirstChar { it.uppercaseChar() }.dropLast(4)
-//                },
-//                modifier = Modifier.align(Alignment.Start),
-//                fontSize = 14.sp,
-//                fontWeight = FontWeight.Bold,
-//
-//            )
         }
     }
 

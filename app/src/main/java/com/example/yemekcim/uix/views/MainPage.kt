@@ -1,5 +1,6 @@
 package com.example.yemekcim.uix.views
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -56,57 +57,68 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.yemekcim.R
 import com.example.yemekcim.uix.viewModel.MainPageViewModel
-
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.platform.LocalContext
+import com.example.yemekcim.data.utils.YemekItem
+import com.example.yemekcim.data.utils.isNetworkAvailable
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainPage(navController: NavController,mainViewModel: MainPageViewModel) {
+fun MainPage(navController: NavController, mainViewModel: MainPageViewModel) {
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
     val yemekListesi = mainViewModel.yemeklerListesi.observeAsState(listOf())
-    val userName="Rıza"
+    val userName = "Rıza"
     var query = remember { mutableStateOf("") }
     val buttonLabels = listOf("Popüler", "Yemekler", "İçecekler", "Tatlılar", "Dondurmalar")
-    var filterButton= remember { mutableStateOf("0") }
-    val seciliKategoriYemekler = mainViewModel.kategoriyeGoreYemekler[filterButton.value] ?: listOf()
-    var contextName=buttonLabels[filterButton.value.toInt()]
+    var filterButton = remember { mutableStateOf("0") }
+    val seciliKategoriYemekler =
+        mainViewModel.kategoriyeGoreYemekler[filterButton.value] ?: listOf()
+    var contextName = buttonLabels[filterButton.value.toInt()]
+    val context = LocalContext.current
+    val isNetworkAvailable = isNetworkAvailable(context)
+
 
     LaunchedEffect(key1 = true) {
         mainViewModel.getYemekler()
-
     }
 
-    Column (
-           modifier = Modifier
-               .windowInsetsPadding(WindowInsets.statusBars)
-               .windowInsetsPadding(WindowInsets.navigationBars)
-               .fillMaxSize(),
-           verticalArrangement = Arrangement.Top,
-           horizontalAlignment = Alignment.CenterHorizontally
-           ){
+    Column(
+        modifier = Modifier
+            .windowInsetsPadding(WindowInsets.statusBars)
+            .windowInsetsPadding(WindowInsets.navigationBars)
+            .fillMaxSize(),
+        verticalArrangement = Arrangement.Top,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
 
-          Row (modifier = Modifier.fillMaxWidth(),
-              verticalAlignment = Alignment.CenterVertically,
-              ){
-              Text(
-                  text = "Merhaba, $userName!",
-                  modifier = Modifier
-                      .padding(start = 10.dp)
-                      .graphicsLayer(alpha = 0.5f)
-              )
-          }
-         Row (modifier = Modifier
-             .fillMaxWidth()
-             .padding(top = 2.dp),
-             verticalAlignment = Alignment.CenterVertically,
-         ){
-             Text(
-                 text = "Ben YEMEKÇİM\nBugün ne yemek istersin?",
-                 modifier = Modifier
-                     .padding(start = 10.dp),
-                 style = TextStyle(fontWeight = FontWeight.Bold, fontSize = 24.sp),
-                 fontFamily = FontFamily(Font(R.font.datang_story))
-             )
-         }
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(
+                text = "Merhaba, $userName!",
+                modifier = Modifier
+                    .padding(start = 10.dp)
+                    .graphicsLayer(alpha = 0.5f)
+            )
+        }
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 2.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(
+                text = "Ben YEMEKÇİM\nBugün ne yemek istersin?",
+                modifier = Modifier
+                    .padding(start = 10.dp),
+                style = TextStyle(fontWeight = FontWeight.Bold, fontSize = 24.sp),
+                fontFamily = FontFamily(Font(R.font.datang_story))
+            )
+        }
         TextField(
             value = query.value,
             onValueChange = { query.value = it },
@@ -126,9 +138,11 @@ fun MainPage(navController: NavController,mainViewModel: MainPageViewModel) {
                 unfocusedIndicatorColor = Color.White
             )
         )
-        Box(modifier = Modifier
-            .fillMaxWidth()
-            .padding(bottom = 0.dp)) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 0.dp)
+        ) {
             LazyHorizontalGrid(
                 rows = GridCells.Fixed(1),
                 modifier = Modifier
@@ -144,30 +158,33 @@ fun MainPage(navController: NavController,mainViewModel: MainPageViewModel) {
                     ) {
                         Button(
                             onClick = {
-                                filterButton.value="$index"
+                                filterButton.value = "$index"
 
                             },
-                            modifier = Modifier.size(70.dp,100.dp),
+                            modifier = Modifier.size(70.dp, 100.dp),
                             shape = RoundedCornerShape(30.dp),
                             colors = ButtonColors(
                                 containerColor = Color(0xFFe6e7e8),
                                 contentColor = Color.Black,
                                 disabledContentColor = Color.LightGray,
-                                disabledContainerColor = Color.LightGray),
+                                disabledContainerColor = Color.LightGray
+                            ),
                             contentPadding = PaddingValues(0.dp)
                         ) {
                             Icon(
                                 painter = painterResource(
-                                    id = when(index){
+                                    id = when (index) {
                                         0 -> R.drawable.popular
                                         1 -> R.drawable.food
                                         2 -> R.drawable.drink
                                         3 -> R.drawable.dessert
                                         4 -> R.drawable.ice_cream
                                         else -> R.drawable.popular
-                                    }),
+                                    }
+                                ),
                                 contentDescription = "",
-                                modifier = Modifier.size(60.dp,40.dp))
+                                modifier = Modifier.size(60.dp, 40.dp)
+                            )
                         }
                         Spacer(modifier = Modifier.height(6.dp))
                         Text(
@@ -182,11 +199,13 @@ fun MainPage(navController: NavController,mainViewModel: MainPageViewModel) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(start = 10.dp)){
+                .padding(start = 10.dp)
+        ) {
             Text(
                 text = "$contextName",
                 fontSize = 24.sp,
-                fontWeight = FontWeight.Bold,)
+                fontWeight = FontWeight.Bold,
+            )
         }
 
 
@@ -224,6 +243,7 @@ fun MainPage(navController: NavController,mainViewModel: MainPageViewModel) {
                             modifier = Modifier.fillMaxSize(),
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
+
                             // Yemek Resmi
                             Box(
                                 modifier = Modifier
@@ -231,18 +251,24 @@ fun MainPage(navController: NavController,mainViewModel: MainPageViewModel) {
                                     .padding(top = 8.dp),
                                 contentAlignment = Alignment.Center
                             ) {
-                                mainViewModel.YemekItem(yemek_resim_adi = seciliKategoriYemekler[index])
+
+                                YemekItem(
+                                    yemek_resim_adi = seciliKategoriYemekler.getOrNull(index) ?: "",
+                                    isNetworkAvailable = isNetworkAvailable
+                                )
+
                             }
 
                             // Yemek İsmi
                             Text(
-                                text = when(seciliKategoriYemekler[index]) {
+                                text = when (seciliKategoriYemekler.getOrNull(index)) {
                                     "kofte.png" -> "Köfte"
                                     "izgarasomon.png" -> "Izgara Somon"
                                     "kadayif.png" -> "Kadayıf"
                                     "sutlac.png" -> "Sütlaç"
                                     "izgaratavuk.png" -> "Izgara Tavuk"
-                                    else -> seciliKategoriYemekler[index].replaceFirstChar { it.uppercaseChar() }.dropLast(4)
+                                    else -> seciliKategoriYemekler.getOrNull(index) ?: "".replaceFirstChar { it.uppercaseChar() }
+                                        .dropLast(4)
                                 },
                                 fontSize = 15.sp,
                                 fontWeight = FontWeight.Bold,
@@ -271,8 +297,11 @@ fun MainPage(navController: NavController,mainViewModel: MainPageViewModel) {
                                     onClick = { /* Sepete ekle işlemi */ },
                                     modifier = Modifier
                                         .padding(end = 4.dp)
-                                        .widthIn(min = 20.dp, max = 100.dp)
-                                    ,colors = ButtonDefaults.buttonColors(containerColor = Color.Green,contentColor = Color.Black),
+                                        .widthIn(min = 20.dp, max = 100.dp),
+                                    colors = ButtonDefaults.buttonColors(
+                                        containerColor = Color.Green,
+                                        contentColor = Color.Black
+                                    ),
                                     shape = RoundedCornerShape(8.dp)
                                 ) {
                                     Text(
@@ -281,7 +310,7 @@ fun MainPage(navController: NavController,mainViewModel: MainPageViewModel) {
                                         fontSize = 9.sp,
                                         maxLines = 1,
                                         overflow = TextOverflow.Ellipsis
-                                     )
+                                    )
                                 }
                             }
                         }
