@@ -61,7 +61,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
 import com.example.yemekcim.data.utils.YemekItem
-import com.example.yemekcim.data.utils.isNetworkAvailable
+import com.example.yemekcim.data.utils.isInternetAvailable
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -78,7 +78,7 @@ fun MainPage(navController: NavController, mainViewModel: MainPageViewModel) {
         mainViewModel.kategoriyeGoreYemekler[filterButton.value] ?: listOf()
     var contextName = buttonLabels[filterButton.value.toInt()]
     val context = LocalContext.current
-    val isNetworkAvailable = isNetworkAvailable(context)
+    val isInternetAvailable = isInternetAvailable(context)
 
 
     LaunchedEffect(key1 = true) {
@@ -251,12 +251,10 @@ fun MainPage(navController: NavController, mainViewModel: MainPageViewModel) {
                                     .padding(top = 8.dp),
                                 contentAlignment = Alignment.Center
                             ) {
-
                                 YemekItem(
                                     yemek_resim_adi = seciliKategoriYemekler.getOrNull(index) ?: "",
-                                    isNetworkAvailable = isNetworkAvailable
+                                    isInternetAvailable = isInternetAvailable
                                 )
-
                             }
 
                             // Yemek İsmi
