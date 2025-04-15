@@ -1,7 +1,6 @@
 package com.example.yemekcim.uix.viewModel
 
-import android.app.Application
-import android.content.Context
+
 import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkCapabilities
@@ -23,33 +22,36 @@ import javax.inject.Inject
 @HiltViewModel
 class MainPageViewModel @Inject constructor(
     private val yrepo: YemeklerRepository,
-    application: Application,
     private val connectivityManager: ConnectivityManager ) :ViewModel()
 {
     var yemeklerListesi = MutableLiveData<List<Yemekler>>()
 
-    private lateinit var _isConnected: MutableStateFlow<Boolean>
+    private val _isConnected = MutableStateFlow(false)
     val isConnected: StateFlow<Boolean> = _isConnected.asStateFlow()
+
+    private lateinit var networkCallback: ConnectivityManager.NetworkCallback
 
     init {
         getYemekler()
         try {
-            val initialState = isCurrentlyConnected()
-            _isConnected = MutableStateFlow(initialState)// StateFlow'u init içinde güncelle
-            println("Network Check: Initial connection state set to: $initialState")
+            _isConnected.value = isCurrentlyConnected()
+            println("Network Check: Initial connection state set to: ${_isConnected.value}")
         } catch (e: Exception) {
-            // isCurrentlyConnected içinde bir hata olursa (beklenmedik durum)
-            println("Network Check: Error setting initial connection state in init: ${e.message}")
-            _isConnected = MutableStateFlow(false) // Hata durumunda varsayılan olarak false ayarla
+            println("Network Check: Error setting initial connection state: ${e.message}")
         }
 
-        // 2. Adım: Network dinleyicisini kur ve başlat
-        setupNetworkCallback() // Callback nesnesini oluşturur
+        setupNetworkCallback()
         startMonitoring()
     }
+
     fun getYemekler() {
         CoroutineScope(Dispatchers.Main).launch{
-            yemeklerListesi.value = yrepo.tumYemekleriGetir()
+            try {
+                yemeklerListesi.value = yrepo.tumYemekleriGetir()
+            } catch (e: Exception) {
+                println("Error fetching meals: ${e.message}")
+                yemeklerListesi.value = emptyList()
+            }
         }
     }
 
@@ -63,8 +65,6 @@ class MainPageViewModel @Inject constructor(
         "3" to listOf("baklava.png", "kadayif.png", "sutlac.png", "tiramisu.png"),
         "4" to listOf() // Dondurma kategorisi boş
     )
-
-    private lateinit var networkCallback: ConnectivityManager.NetworkCallback
 
     private fun setupNetworkCallback() {
         networkCallback = object : ConnectivityManager.NetworkCallback() {
@@ -93,12 +93,11 @@ class MainPageViewModel @Inject constructor(
     private fun isCurrentlyConnected(): Boolean {
         println("Network Check: isCurrentlyConnected called")
         try {
-            val activeNetwork = connectivityManager.activeNetwork // Doğrudan kullan
-            val capabilities = connectivityManager.getNetworkCapabilities(activeNetwork)
-            val connected = capabilities != null &&
-                    (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) ||
-                            capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) ||
-                            capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)) &&
+            val activeNetwork = connectivityManager.activeNetwork ?: return false
+            val capabilities = connectivityManager.getNetworkCapabilities(activeNetwork) ?: return false
+            val connected = (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) ||
+                    capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) ||
+                    capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)) &&
                     capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) &&
                     capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)
             println("Network Check: isCurrentlyConnected check result: $connected")
@@ -119,12 +118,8 @@ class MainPageViewModel @Inject constructor(
             println("Network Check: Monitoring Started, initial state: ${_isConnected.value}")
         } catch (e: SecurityException) {
             println("Network Check: SecurityException registering callback. Check ACCESS_NETWORK_STATE permission. ${e.message}")
-            _isConnected.value = false
         } catch (e: Exception) {
             println("Network Check: Exception registering callback: ${e.message}")
-            if(_isConnected.value != null) {
-                _isConnected.value = false
-            }
         }
     }
 
@@ -135,15 +130,8 @@ class MainPageViewModel @Inject constructor(
             println("Network Check: Monitoring Stopped")
         } catch (e: IllegalArgumentException) {
             println("Network Check: Callback already unregistered or never registered: ${e.message}")
-        }
-        catch (e: Exception) {
+        } catch (e: Exception) {
             println("Network Check: Error unregistering callback: ${e.message}")
         }
     }
 }
-
-
-
-
-
-

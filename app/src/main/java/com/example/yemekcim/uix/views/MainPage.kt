@@ -61,15 +61,11 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
 import com.example.yemekcim.data.utils.YemekItem
-import com.example.yemekcim.data.utils.isInternetAvailable
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainPage(navController: NavController, mainViewModel: MainPageViewModel) {
-    val snackbarHostState = remember { SnackbarHostState() }
-    val scope = rememberCoroutineScope()
-    val yemekListesi = mainViewModel.yemeklerListesi.observeAsState(listOf())
     val userName = "Rıza"
     var query = remember { mutableStateOf("") }
     val buttonLabels = listOf("Popüler", "Yemekler", "İçecekler", "Tatlılar", "Dondurmalar")
@@ -77,13 +73,6 @@ fun MainPage(navController: NavController, mainViewModel: MainPageViewModel) {
     val seciliKategoriYemekler =
         mainViewModel.kategoriyeGoreYemekler[filterButton.value] ?: listOf()
     var contextName = buttonLabels[filterButton.value.toInt()]
-    val context = LocalContext.current
-    val isInternetAvailable = isInternetAvailable(context)
-
-
-    LaunchedEffect(key1 = true) {
-        mainViewModel.getYemekler()
-    }
 
     Column(
         modifier = Modifier
@@ -221,7 +210,7 @@ fun MainPage(navController: NavController, mainViewModel: MainPageViewModel) {
             ) {
                 items(
                     when (filterButton.value) {
-                        "0" -> yemekListesi.value.size
+                        "0" -> 14
                         "1" -> 6
                         "2" -> 4
                         "3" -> 4
@@ -253,7 +242,6 @@ fun MainPage(navController: NavController, mainViewModel: MainPageViewModel) {
                             ) {
                                 YemekItem(
                                     yemek_resim_adi = seciliKategoriYemekler.getOrNull(index) ?: "",
-                                    isInternetAvailable = isInternetAvailable
                                 )
                             }
 
@@ -265,7 +253,9 @@ fun MainPage(navController: NavController, mainViewModel: MainPageViewModel) {
                                     "kadayif.png" -> "Kadayıf"
                                     "sutlac.png" -> "Sütlaç"
                                     "izgaratavuk.png" -> "Izgara Tavuk"
-                                    else -> seciliKategoriYemekler.getOrNull(index) ?: "".replaceFirstChar { it.uppercaseChar() }
+                                    else -> seciliKategoriYemekler
+                                        .getOrNull(index) ?: ""
+                                            .replaceFirstChar { it.uppercaseChar() }
                                         .dropLast(4)
                                 },
                                 fontSize = 15.sp,

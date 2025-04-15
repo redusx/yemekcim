@@ -18,60 +18,46 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.yemekcim.R
 
-fun isInternetAvailable(context: Context): Boolean {
-    val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as? ConnectivityManager
-
-    if (connectivityManager == null) {
-        Log.w("InternetCheck", "ConnectivityManager alınamadı.")
-        return false
-    }
-
-    try {
-        val network = connectivityManager.activeNetwork ?: return false
-        val capabilities = connectivityManager.getNetworkCapabilities(network) ?: return false
-        return capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)
-
-    } catch (e: Exception) {
-        Log.e("InternetCheck", "İnternet durumu kontrol edilirken hata oluştu", e)
-        return false
-    }
-}
-
-//@Composable
-//fun InternetStateus(){
-//    val context = LocalContext.current
-//    val hasInternet = isInternetAvailable(context)
+//fun isInternetAvailable(context: Context): Boolean {
+//    val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as? ConnectivityManager
+//
+//    if (connectivityManager == null) {
+//        Log.w("InternetCheck", "ConnectivityManager alınamadı.")
+//        return false
+//    }
+//
+//    try {
+//        val network = connectivityManager.activeNetwork ?: return false
+//        val capabilities = connectivityManager.getNetworkCapabilities(network) ?: return false
+//        return capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)
+//
+//    } catch (e: Exception) {
+//        Log.e("InternetCheck", "İnternet durumu kontrol edilirken hata oluştu", e)
+//        return false
+//    }
 //}
 
 @Composable
-fun YemekItem(yemek_resim_adi: String,isInternetAvailable: Boolean) {
-    if (isInternetAvailable) {
-        val BASE_URL = "http://kasimadalan.pe.hu/yemekler/resimler/"
-        val resimUrl = "$BASE_URL${yemek_resim_adi}"
+fun YemekItem(yemek_resim_adi: String) {
 
-        val context = LocalContext.current
-        val painter = rememberAsyncImagePainter(
-            model = ImageRequest.Builder(context)
-                .data(resimUrl)
-                .crossfade(true)
-                .placeholder(R.drawable.imageerror)
-                .error(R.drawable.imageerror)
-                .build()
-        )
+    val BASE_URL = "http://kasimadalan.pe.hu/yemekler/resimler/"
+    val resimUrl = "$BASE_URL${yemek_resim_adi}"
 
-        Image(
-            painter = painter,
-            contentDescription = yemek_resim_adi,
-            modifier = Modifier
-                .size(100.dp, 150.dp)
-                .clip(RoundedCornerShape(10.dp))
-        )
-    }else {
-        Image(
-            painter = painterResource(id = R.drawable.imageerror),
-            contentDescription = "İnternet yok",
-            modifier = Modifier.size(100.dp, 150.dp).clip(RoundedCornerShape(10.dp))
-        )
-    }
+    val context = LocalContext.current
+    val painter = rememberAsyncImagePainter(
+        model = ImageRequest.Builder(context)
+            .data(resimUrl)
+            .crossfade(true)
+            .placeholder(R.drawable.imageerror)
+            .error(R.drawable.imageerror)
+            .build()
+    )
 
+    Image(
+        painter = painter,
+        contentDescription = yemek_resim_adi,
+        modifier = Modifier
+            .size(100.dp, 150.dp)
+            .clip(RoundedCornerShape(10.dp))
+    )
 }

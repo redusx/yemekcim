@@ -13,6 +13,4 @@ interface YemeklerDao {
     @GET("yemekler/tumYemekleriGetir.php")
     suspend fun tumYemekleriGetir() : YemeklerCevap
 
-//    @POST("yemekler/resimler/")
-//    suspend fun getImage() : Call<CRUDanswer>
 }
