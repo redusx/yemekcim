@@ -37,27 +37,27 @@ import com.example.yemekcim.R
 //    }
 //}
 
-@Composable
-fun YemekItem(yemek_resim_adi: String) {
-
-    val BASE_URL = "http://kasimadalan.pe.hu/yemekler/resimler/"
-    val resimUrl = "$BASE_URL${yemek_resim_adi}"
-
-    val context = LocalContext.current
-    val painter = rememberAsyncImagePainter(
-        model = ImageRequest.Builder(context)
-            .data(resimUrl)
-            .crossfade(true)
-            .placeholder(R.drawable.imageerror)
-            .error(R.drawable.imageerror)
-            .build()
-    )
-
-    Image(
-        painter = painter,
-        contentDescription = yemek_resim_adi,
-        modifier = Modifier
-            .size(100.dp, 150.dp)
-            .clip(RoundedCornerShape(10.dp))
-    )
-}
+//@Composable
+//fun YemekItem(yemek_resim_adi: String) {
+//
+//    val BASE_URL = "http://kasimadalan.pe.hu/yemekler/resimler/"
+//    val resimUrl = "$BASE_URL${yemek_resim_adi}"
+//
+//    val context = LocalContext.current
+//    val painter = rememberAsyncImagePainter(
+//        model = ImageRequest.Builder(context)
+//            .data(resimUrl)
+//            .crossfade(true)
+//            .placeholder(R.drawable.imageerror)
+//            .error(R.drawable.imageerror)
+//            .build()
+//    )
+//
+//    Image(
+//        painter = painter,
+//        contentDescription = yemek_resim_adi,
+//        modifier = Modifier
+//            .size(100.dp, 150.dp)
+//            .clip(RoundedCornerShape(10.dp))
+//    )
+//}

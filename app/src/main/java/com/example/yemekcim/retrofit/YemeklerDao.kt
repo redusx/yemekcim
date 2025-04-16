@@ -9,7 +9,6 @@ import retrofit2.http.POST
 
 interface YemeklerDao {
 
-
     @GET("yemekler/tumYemekleriGetir.php")
     suspend fun tumYemekleriGetir() : YemeklerCevap
 

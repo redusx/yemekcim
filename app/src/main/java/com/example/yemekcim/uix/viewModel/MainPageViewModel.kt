@@ -5,8 +5,10 @@ import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkCapabilities
 import android.net.NetworkRequest
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.yemekcim.data.entity.Yemekler
 import com.example.yemekcim.data.repo.YemeklerRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -21,18 +23,48 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainPageViewModel @Inject constructor(
-    private val yrepo: YemeklerRepository,
+    private val yemeklerRepository: YemeklerRepository,
     private val connectivityManager: ConnectivityManager ) :ViewModel()
 {
-    var yemeklerListesi = MutableLiveData<List<Yemekler>>()
+    // Yemekler listesi için StateFlow (Compose ile kullanım için)
+    private val _yemeklerStateFlow = MutableStateFlow<List<Yemekler>>(emptyList())
+    val yemeklerStateFlow: StateFlow<List<Yemekler>> = _yemeklerStateFlow.asStateFlow()
 
+    // Yemekler listesi için LiveData (XML UI ile kullanım için)
+    private val _yemeklerLiveData = MutableLiveData<List<Yemekler>>(emptyList())
+    val yemeklerLiveData: LiveData<List<Yemekler>> = _yemeklerLiveData
+
+    // Yükleme durumu
+    private val _yukleniyor = MutableStateFlow(false)
+    val yukleniyor: StateFlow<Boolean> = _yukleniyor.asStateFlow()
+
+    // Hata durumu
+    private val _hata = MutableStateFlow<String?>(null)
+    val hata: StateFlow<String?> = _hata.asStateFlow()
     private val _isConnected = MutableStateFlow(false)
     val isConnected: StateFlow<Boolean> = _isConnected.asStateFlow()
+
+    fun tumYemekleriGetir() {
+        viewModelScope.launch {
+            _yukleniyor.value = true
+            _hata.value = null
+
+            try {
+                val yemekler = yemeklerRepository.tumYemekleriGetir()
+                _yemeklerStateFlow.value = yemekler
+                _yemeklerLiveData.value = yemekler
+            } catch (e: Exception) {
+                _hata.value = "Yemekler yüklenirken hata oluştu: ${e.message}"
+            } finally {
+                _yukleniyor.value = false
+            }
+        }
+    }
 
     private lateinit var networkCallback: ConnectivityManager.NetworkCallback
 
     init {
-        getYemekler()
+        tumYemekleriGetir()
         try {
             _isConnected.value = isCurrentlyConnected()
             println("Network Check: Initial connection state set to: ${_isConnected.value}")
@@ -44,16 +76,6 @@ class MainPageViewModel @Inject constructor(
         startMonitoring()
     }
 
-    fun getYemekler() {
-        CoroutineScope(Dispatchers.Main).launch{
-            try {
-                yemeklerListesi.value = yrepo.tumYemekleriGetir()
-            } catch (e: Exception) {
-                println("Error fetching meals: ${e.message}")
-                yemeklerListesi.value = emptyList()
-            }
-        }
-    }
 
     val kategoriyeGoreYemekler = mapOf(
         "0" to listOf("kofte.png", "ayran.png", "baklava.png", "fanta.png",
