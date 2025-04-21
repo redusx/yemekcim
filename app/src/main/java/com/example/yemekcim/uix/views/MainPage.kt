@@ -217,8 +217,12 @@ fun MainPage(navController: NavController, mainViewModel: MainPageViewModel) {
                 columns = GridCells.Fixed(2),
                 horizontalArrangement = Arrangement.spacedBy(10.dp)
             ) {
-                items(yemekler) { yemek ->
-                    YemekKarti(yemek = yemek)
+                items(seciliKategoriYemekler) { id ->
+                    val yemek = yemekler.find { it.yemek_id == id }
+
+                    yemek?.let {
+                        YemekKarti(yemek = it)
+                    }
                 }
             }
 //            LazyVerticalGrid(
@@ -327,77 +331,6 @@ fun MainPage(navController: NavController, mainViewModel: MainPageViewModel) {
     }
 }
 
-//@Composable
-//fun YemekKarti(yemek: Yemekler) {
-//    Card(
-//        modifier = Modifier
-//            .fillMaxWidth()
-//            .height(250.dp)
-//            .padding(bottom = 10.dp)
-//            .background(Color(0x40F1F1F1)),
-//        shape = RoundedCornerShape(10.dp),
-//        elevation = CardDefaults.elevatedCardElevation(defaultElevation = 4.dp)
-//    ) {
-//        Column(
-//            modifier = Modifier.fillMaxSize(),
-//            horizontalAlignment = Alignment.CenterHorizontally
-//        ) {
-//            val imageUrl = "http://kasimadalan.pe.hu/yemekler/resimler/${yemek.yemek_resim_adi}"
-//
-//            AsyncImage(
-//                model = imageUrl,
-//                contentDescription = yemek.yemek_adi,
-//                modifier = Modifier
-//                    .size(100.dp, 150.dp)
-//                    .clip(RoundedCornerShape(10.dp))
-//            )
-//            Text(
-//                text = yemek.yemek_adi,
-//                style = MaterialTheme.typography.titleMedium,
-//                modifier = Modifier
-//                    .padding(top = 8.dp, start = 4.dp)
-//                    .align(Alignment.Start),
-//                fontSize = 15.sp,
-//                fontWeight = FontWeight.Bold
-//            )
-//
-//            Row(
-//                modifier = Modifier
-//                    .fillMaxWidth(),
-//                horizontalArrangement = Arrangement.SpaceBetween,
-//                verticalAlignment = Alignment.CenterVertically
-//            ) {
-//                Text(
-//                    text = "${yemek.yemek_fiyat} ₺",
-//                    style = MaterialTheme.typography.bodyLarge,
-//                    modifier = Modifier.padding(top = 4.dp, start = 4.dp),
-//                    color = Color.Black,
-//                    fontSize = 15.sp
-//                )
-//                Button(
-//                    onClick = { /* Sepete ekle işlemi */ },
-//                    modifier = Modifier
-//                        .padding(end = 4.dp)
-//                        .widthIn(min = 20.dp, max = 100.dp),
-//                    colors = ButtonDefaults.buttonColors(
-//                        containerColor = Color.Green,
-//                        contentColor = Color.Black
-//                    ),
-//                    shape = RoundedCornerShape(8.dp)
-//                ) {
-//                    Text(
-//                        text = "Sepete Ekle",
-//                        color = Color.Black,
-//                        fontSize = 9.sp,
-//                        maxLines = 1,
-//                        overflow = TextOverflow.Ellipsis
-//                    )
-//                }
-//            }
-//        }
-//    }
-//}
-
 @Composable
 fun YemekKarti(yemek: Yemekler) {
     Card(
@@ -435,11 +368,11 @@ fun YemekKarti(yemek: Yemekler) {
                 fontSize = 16.sp,
                 color = Color.Black,
                 modifier = Modifier
-                    .padding(top = 8.dp, start = 2.dp)
+                    .padding(top = 8.dp)
                     .align(Alignment.Start)
             )
 
-            Spacer(modifier = Modifier.height(4.dp))
+            Spacer(modifier = Modifier.height(1.dp))
 
             Row(
                 modifier = Modifier.fillMaxWidth(),

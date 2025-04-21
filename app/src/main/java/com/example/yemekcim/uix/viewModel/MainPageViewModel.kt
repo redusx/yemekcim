@@ -78,13 +78,10 @@ class MainPageViewModel @Inject constructor(
 
 
     val kategoriyeGoreYemekler = mapOf(
-        "0" to listOf("kofte.png", "ayran.png", "baklava.png", "fanta.png",
-            "izgarasomon.png", "izgaratavuk.png", "kadayif.png", "kahve.png",
-            "lazanya.png", "makarna.png", "pizza.png", "su.png",
-            "sutlac.png", "tiramisu.png"),
-        "1" to listOf("kofte.png", "izgarasomon.png", "izgaratavuk.png", "lazanya.png", "makarna.png", "pizza.png"),
-        "2" to listOf("ayran.png", "fanta.png", "kahve.png", "su.png"),
-        "3" to listOf("baklava.png", "kadayif.png", "sutlac.png", "tiramisu.png"),
+        "0" to listOf(4, 5, 8, 9, 10, 11,1, 3, 7, 12,2, 6, 13, 14), //Popüler
+        "1" to listOf(4, 5, 8, 9, 10, 11), //Yemekler
+        "2" to listOf(1, 3, 7, 12), //İçecekler
+        "3" to listOf(2, 6, 13, 14), //Tatlılar
         "4" to listOf() // Dondurma kategorisi boş
     )
 
