@@ -5,6 +5,7 @@ import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkCapabilities
 import android.net.NetworkRequest
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -19,6 +20,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import androidx.compose.runtime.State
 
 
 @HiltViewModel
@@ -26,6 +28,17 @@ class MainPageViewModel @Inject constructor(
     private val yemeklerRepository: YemeklerRepository,
     private val connectivityManager: ConnectivityManager ) :ViewModel()
 {
+
+    private val _dialogState = mutableStateOf<Yemekler?>(null)
+    val dialogState: State<Yemekler?> = _dialogState
+
+    fun showDialog(yemek: Yemekler) {
+        _dialogState.value = yemek
+    }
+
+    fun closeDialog() {
+        _dialogState.value = null
+    }
     // Yemekler listesi için StateFlow (Compose ile kullanım için)
     private val _yemeklerStateFlow = MutableStateFlow<List<Yemekler>>(emptyList())
     val yemeklerStateFlow: StateFlow<List<Yemekler>> = _yemeklerStateFlow.asStateFlow()

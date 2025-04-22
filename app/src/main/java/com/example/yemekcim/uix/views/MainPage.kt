@@ -1,5 +1,6 @@
 package com.example.yemekcim.uix.views
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -55,6 +56,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.yemekcim.R
 import com.example.yemekcim.uix.viewModel.MainPageViewModel
+import com.example.yemekcim.uix.views.SepeteEkleDialog
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.layout.ContentScale
@@ -73,6 +75,7 @@ fun MainPage(navController: NavController, mainViewModel: MainPageViewModel) {
     val seciliKategoriYemekler =
         mainViewModel.kategoriyeGoreYemekler[filterButton.value] ?: listOf()
     var contextName = buttonLabels[filterButton.value.toInt()]
+    val seciliYemek by mainViewModel.dialogState
 
     LaunchedEffect(key1 = true) {
         mainViewModel.tumYemekleriGetir()
@@ -215,16 +218,26 @@ fun MainPage(navController: NavController, mainViewModel: MainPageViewModel) {
                     val yemek = yemekler.find { it.yemek_id == id }
 
                     yemek?.let {
-                        YemekKarti(yemek = it)
+                        YemekKarti(yemek = it, mainViewModel = mainViewModel)
                     }
                 }
             }
         }
     }
+    seciliYemek?.let { yemek ->
+        SepeteEkleDialog(
+            yemek = yemek,
+            onDismiss = { mainViewModel.closeDialog() },
+            onEkle = { adet ->
+                Log.e("Sepet", "${yemek.yemek_adi} x$adet eklendi")
+            }
+        )
+    }
 }
 
+
 @Composable
-fun YemekKarti(yemek: Yemekler) {
+fun YemekKarti(yemek: Yemekler,mainViewModel: MainPageViewModel) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -280,7 +293,7 @@ fun YemekKarti(yemek: Yemekler) {
                 )
 
                 Button(
-                    onClick = { /* Sepete ekle işlemi */ },
+                    onClick = { mainViewModel.showDialog(yemek) },
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color(0xFF4CAF50),
                         contentColor = Color.White
