@@ -1,6 +1,5 @@
 package com.example.yemekcim.uix.views
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,7 +14,6 @@ import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -30,7 +28,6 @@ import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -59,7 +56,6 @@ import androidx.navigation.NavController
 import com.example.yemekcim.R
 import com.example.yemekcim.uix.viewModel.MainPageViewModel
 import androidx.compose.runtime.collectAsState
-//import com.example.yemekcim.data.utils.YemekItem
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.layout.ContentScale
 import coil.compose.AsyncImage
@@ -70,8 +66,6 @@ import com.example.yemekcim.data.entity.Yemekler
 @Composable
 fun MainPage(navController: NavController, mainViewModel: MainPageViewModel) {
     val yemekler by mainViewModel.yemeklerStateFlow.collectAsState()
-    val yukleniyor by mainViewModel.yukleniyor.collectAsState()
-    val hata by mainViewModel.hata.collectAsState()
     val userName = "Rıza"
     var query = remember { mutableStateOf("") }
     val buttonLabels = listOf("Popüler", "Yemekler", "İçecekler", "Tatlılar", "Dondurmalar")
@@ -225,108 +219,6 @@ fun MainPage(navController: NavController, mainViewModel: MainPageViewModel) {
                     }
                 }
             }
-//            LazyVerticalGrid(
-//                modifier = Modifier.fillMaxSize(),
-//                columns = GridCells.Fixed(2),
-//                horizontalArrangement = Arrangement.spacedBy(10.dp)
-//            ) {
-//                items(
-//                    when (filterButton.value) {
-//                        "0" -> 14
-//                        "1" -> 6
-//                        "2" -> 4
-//                        "3" -> 4
-//                        "4" -> 0
-//                        else -> 0
-//                    }
-//                ) { index ->
-
-//                    Card(
-//                        modifier = Modifier
-//                            .fillMaxWidth()
-//                            .height(250.dp)
-//                            .padding(bottom = 10.dp)
-//                            .background(Color(0x40F1F1F1)),
-//                        shape = RoundedCornerShape(10.dp),
-//                        elevation = CardDefaults.elevatedCardElevation(defaultElevation = 4.dp)
-//                    ) {
-//                        Column(
-//                            modifier = Modifier.fillMaxSize(),
-//                            horizontalAlignment = Alignment.CenterHorizontally
-//                        ) {
-//
-//                            // Yemek Resmi
-//                            Box(
-//                                modifier = Modifier
-//                                    .size(150.dp)
-//                                    .padding(top = 8.dp),
-//                                contentAlignment = Alignment.Center
-//                            ) {
-//                                YemekItem(
-//                                    yemek_resim_adi = seciliKategoriYemekler.getOrNull(index) ?: "",
-//                                )
-//                            }
-//
-//                            // Yemek İsmi
-//                            Text(
-//                                text = when (seciliKategoriYemekler.getOrNull(index)) {
-//                                    "kofte.png" -> "Köfte"
-//                                    "izgarasomon.png" -> "Izgara Somon"
-//                                    "kadayif.png" -> "Kadayıf"
-//                                    "sutlac.png" -> "Sütlaç"
-//                                    "izgaratavuk.png" -> "Izgara Tavuk"
-//                                    else -> seciliKategoriYemekler
-//                                        .getOrNull(index) ?: ""
-//                                            .replaceFirstChar { it.uppercaseChar() }
-//                                        .dropLast(4)
-//                                },
-//                                fontSize = 15.sp,
-//                                fontWeight = FontWeight.Bold,
-//                                modifier = Modifier
-//                                    .align(Alignment.Start)
-//                                    .padding(start = 4.dp)
-//                            )
-//
-//                            // Fiyat ve Buton
-//                            Row(
-//                                modifier = Modifier
-//                                    .fillMaxWidth(),
-//                                horizontalArrangement = Arrangement.SpaceBetween,
-//                                verticalAlignment = Alignment.CenterVertically
-//                            ) {
-//                                Text(
-//                                    text = "279.99 TL",
-//                                    style = MaterialTheme.typography.bodyLarge,
-//                                    color = Color.Black,
-//                                    modifier = Modifier
-//                                        .padding(start = 4.dp),
-//                                    fontSize = 15.sp
-//                                )
-//
-//                                Button(
-//                                    onClick = { /* Sepete ekle işlemi */ },
-//                                    modifier = Modifier
-//                                        .padding(end = 4.dp)
-//                                        .widthIn(min = 20.dp, max = 100.dp),
-//                                    colors = ButtonDefaults.buttonColors(
-//                                        containerColor = Color.Green,
-//                                        contentColor = Color.Black
-//                                    ),
-//                                    shape = RoundedCornerShape(8.dp)
-//                                ) {
-//                                    Text(
-//                                        text = "Sepete Ekle",
-//                                        color = Color.Black,
-//                                        fontSize = 9.sp,
-//                                        maxLines = 1,
-//                                        overflow = TextOverflow.Ellipsis
-//                                    )
-//                                }
-//                            }
-//                        }
-//                    }
-//                }
-//            }
         }
     }
 }
@@ -380,7 +272,7 @@ fun YemekKarti(yemek: Yemekler) {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "${yemek.yemek_fiyat} ₺",
+                    text = "${yemek.yemek_fiyat}₺",
                     style = MaterialTheme.typography.bodyLarge,
                     fontSize = 18.sp,
                     fontWeight = FontWeight.SemiBold,
