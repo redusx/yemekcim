@@ -19,23 +19,6 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
-//    @Provides
-//    @Singleton
-//    fun provideYemeklerRepository(yds:YemeklerDataSource) : YemeklerRepository {
-//        return  YemeklerRepository(yds)
-//    }
-
-//    @Provides
-//    @Singleton
-//    fun provideYemeklerDataSource(ydao:YemeklerDao) : YemeklerDataSource {
-//        return  YemeklerDataSource(ydao)
-//    }
-//
-//    @Provides
-//    @Singleton
-//    fun provideYemeklerDao() : YemeklerDao {
-//        return ApiUtils.getYemeklerDao()
-//    }
 
     @Provides
     @Singleton

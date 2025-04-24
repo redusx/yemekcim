@@ -5,6 +5,7 @@ import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkCapabilities
 import android.net.NetworkRequest
+import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -97,6 +98,27 @@ class MainPageViewModel @Inject constructor(
         "3" to listOf(2, 6, 13, 14), //Tatlılar
         "4" to listOf() // Dondurma kategorisi boş
     )
+
+    fun sepeteEkle(yemek: Yemekler, adet: Int, kullaniciAdi: String = "riza") {
+        viewModelScope.launch {
+            try {
+                val response = yemeklerRepository.sepeteYemekEkle(
+                    yemekAdi = yemek.yemek_adi,
+                    yemekResimAdi = yemek.yemek_resim_adi,
+                    yemekFiyat = yemek.yemek_fiyat,
+                    yemekSiparisAdet = adet,
+                    kullaniciAdi = kullaniciAdi
+                )
+                Log.e("Sepet", "Başarılı: ${response.message}")
+            } catch (e: Exception) {
+                Log.e("Sepet", "Hata: ${e.localizedMessage}")
+            }
+        }
+    }
+
+
+    //-----------------------------------------
+    //Connectivity Manager
 
     private fun setupNetworkCallback() {
         networkCallback = object : ConnectivityManager.NetworkCallback() {

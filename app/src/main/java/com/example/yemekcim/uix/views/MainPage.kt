@@ -224,12 +224,15 @@ fun MainPage(navController: NavController, mainViewModel: MainPageViewModel) {
             }
         }
     }
+
+    //--------
+    //sepete ekle dialog
     seciliYemek?.let { yemek ->
         SepeteEkleDialog(
             yemek = yemek,
             onDismiss = { mainViewModel.closeDialog() },
             onEkle = { adet ->
-                Log.e("Sepet", "${yemek.yemek_adi} x$adet eklendi")
+                mainViewModel.sepeteEkle(yemek, adet)
             }
         )
     }
