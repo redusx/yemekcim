@@ -28,13 +28,14 @@ import com.example.yemekcim.uix.viewModel.MainPageViewModel
 import com.example.yemekcim.uix.views.BottomBar
 import dagger.hilt.android.AndroidEntryPoint
 import android.provider.Settings
+import androidx.appcompat.app.AppCompatDelegate
 import kotlinx.coroutines.delay
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
-        val mainPWM: MainPageViewModel by viewModels()
         super.onCreate(savedInstanceState)
+        val mainPWM: MainPageViewModel by viewModels()
         enableEdgeToEdge()
         setContent {
             YemekcimTheme {

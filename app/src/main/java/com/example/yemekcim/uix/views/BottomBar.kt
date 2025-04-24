@@ -48,33 +48,37 @@ fun BottomBar(modifier: Modifier=Modifier,mainPageViewModel: MainPageViewModel){
 
     Scaffold (
         bottomBar = {
-            NavigationBar {
-                item.forEachIndexed { index, navigationItem ->
-                    NavigationBarItem(
-                        selected = selectedIndex==index,
-                        onClick = {selectedIndex=index},
-                        icon ={
-                            if (selectedIndex==index){
-                                navigationItem.selectedVectorIcon?.let {
-                                    Icon(imageVector = it, contentDescription = "Selected Icon", modifier = Modifier.size(36.dp))
-                                } ?: navigationItem.selectedPainterIcon?.let {
-                                    Image(painter = it, contentDescription = "Selected Icon", modifier = Modifier.size(36.dp))
-                                }
-                            }else{
-                                navigationItem.unselectedVectorIcon?.let {
-                                    Icon(imageVector = it, contentDescription = "Unselected Icon", modifier = Modifier.size(36.dp))
-                                } ?: navigationItem.unselectedPainterIcon?.let {
-                                    Image(painter = it, contentDescription = "Unselected Icon", modifier = Modifier.size(36.dp))
+            if (selectedIndex != 1) {
+                NavigationBar {
+                    item.forEachIndexed { index, navigationItem ->
+                        NavigationBarItem(
+                            selected = selectedIndex == index,
+                            onClick = { selectedIndex = index },
+                            icon = {
+                                if (selectedIndex==index){
+                                    navigationItem.selectedVectorIcon?.let {
+                                        Icon(imageVector = it, contentDescription = "Selected Icon", modifier = Modifier.size(36.dp))
+                                    } ?: navigationItem.selectedPainterIcon?.let {
+                                        Image(painter = it, contentDescription = "Selected Icon", modifier = Modifier.size(36.dp))
+                                    }
+                                }else{
+                                    navigationItem.unselectedVectorIcon?.let {
+                                        Icon(imageVector = it, contentDescription = "Unselected Icon", modifier = Modifier.size(36.dp))
+                                    } ?: navigationItem.unselectedPainterIcon?.let {
+                                        Image(painter = it, contentDescription = "Unselected Icon", modifier = Modifier.size(36.dp))
+                                    }
                                 }
                             }
-                        })
+                        )
+                    }
                 }
             }
-        },
+        }
         ){innerPadding->
         ContentScreen(
             modifier = Modifier.padding(innerPadding),
             selectedIndex = selectedIndex,
+            onSelectedIndexChange = { selectedIndex = it },
             mainPageViewModel = mainPageViewModel)
     }
 }
@@ -82,13 +86,15 @@ fun BottomBar(modifier: Modifier=Modifier,mainPageViewModel: MainPageViewModel){
 @Composable
 fun ContentScreen(modifier: Modifier=Modifier,
                   selectedIndex:Int,
+                  onSelectedIndexChange: (Int) -> Unit,
                   mainPageViewModel: MainPageViewModel){
     val navController= rememberNavController()
 
     when(selectedIndex){
         0 -> MainPage(mainViewModel = mainPageViewModel,navController = navController)
-        1 -> CartPage(navController = navController)
+        1 -> CartPage(navController = navController, onBack = { onSelectedIndexChange(0) })
         2 -> ProfilePage(navController = navController)
 
     }
 }
+

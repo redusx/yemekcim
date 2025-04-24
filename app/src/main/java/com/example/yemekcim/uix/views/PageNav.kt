@@ -17,7 +17,7 @@ fun pageNav(mainViewModel: MainPageViewModel){
             ProfilePage(navController=navController)
         }
         composable("cartPage"){
-            CartPage(navController = navController)
+            CartPage(navController = navController, onBack = { navController.popBackStack() })
         }
 
     }
