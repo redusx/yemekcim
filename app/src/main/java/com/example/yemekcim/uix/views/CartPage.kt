@@ -7,15 +7,12 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBars
-import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Card
 import androidx.compose.material3.Text
@@ -41,6 +38,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBar
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -48,15 +46,19 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.compose.runtime.mutableStateMapOf
+import com.example.yemekcim.data.entity.SepetYemek
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CartPage(cartViewModel: CartPageViewModel = hiltViewModel(), navController: NavController,onBack: () -> Unit) {
-    val sepet = cartViewModel.sepetListesi.value
+fun CartPage(
+    cartViewModel: CartPageViewModel = hiltViewModel(),
+    navController: NavController,
+    onBack: () -> Unit
+) {
+    val sepet: List<SepetYemek> by cartViewModel.sepetListesi
+    val displayedQuantities = remember { mutableStateMapOf<String, Int>() }
 
-    val toplamTutar = remember(sepet) {
-        sepet?.sumOf { (it.yemekFiyat.toIntOrNull() ?: 0) * (it.yemekSiparisAdet.toIntOrNull() ?: 0) } ?: 0
-    }
     BackHandler {
         onBack()
     }
@@ -64,12 +66,35 @@ fun CartPage(cartViewModel: CartPageViewModel = hiltViewModel(), navController: 
     LaunchedEffect(Unit) {
         cartViewModel.sepettekiYemekleriGetir()
     }
+    LaunchedEffect(sepet) {
+        sepet.forEach { yemek ->
+            val yemekId = yemek.sepetYemekId
+            val apiQuantity = yemek.yemekSiparisAdet.toIntOrNull() ?: 0
+            if (!displayedQuantities.containsKey(yemekId)) {
+                displayedQuantities[yemekId] = apiQuantity
+            }
+        }
+        val currentKeys = sepet.map { it.sepetYemekId }.toSet() ?: emptySet()
+        if (displayedQuantities.keys.retainAll(currentKeys)) {
+            println("Map cleaned. Remaining keys: ${displayedQuantities.keys}")
+        }
+    }
+
+    val totalCartPrice by remember(sepet, displayedQuantities.entries) {
+        derivedStateOf {
+            sepet.sumOf { yemek ->
+                val quantity = displayedQuantities[yemek.sepetYemekId] ?: 0
+                val price = yemek.yemekFiyat.toIntOrNull() ?: 0
+                quantity * price
+            }
+        }
+    }
 
     Scaffold(
         topBar = {
             TopAppBar(
                 title = { Text("Sepetim", fontWeight = FontWeight.Bold) },
-                navigationIcon = { // <<< Geri butonu için navigationIcon eklendi
+                navigationIcon = {
                     IconButton(onClick = {
                         onBack()
                     }) {
@@ -96,7 +121,11 @@ fun CartPage(cartViewModel: CartPageViewModel = hiltViewModel(), navController: 
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text("Toplam Tutar:", fontWeight = FontWeight.ExtraBold, fontSize = 20.sp)
-                        Text("$toplamTutar ₺", fontWeight = FontWeight.ExtraBold, fontSize = 20.sp)
+                        Text(
+                            "$totalCartPrice ₺",
+                            fontWeight = FontWeight.ExtraBold,
+                            fontSize = 20.sp
+                        )
                     }
 
                     Button(
@@ -119,7 +148,8 @@ fun CartPage(cartViewModel: CartPageViewModel = hiltViewModel(), navController: 
         if (sepet.isNullOrEmpty()) {
             Column(
                 modifier = Modifier
-                    .fillMaxSize().padding(innerPadding),
+                    .fillMaxSize()
+                    .padding(innerPadding),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
@@ -133,19 +163,26 @@ fun CartPage(cartViewModel: CartPageViewModel = hiltViewModel(), navController: 
                 )
             }
         } else {
-            Box(modifier = Modifier
-                .fillMaxSize().padding(innerPadding)) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding)
+            ) {
                 LazyColumn(
                     modifier = Modifier
                         .fillMaxSize(),
                     // contentPadding = PaddingValues(bottom = 80.dp)
                 ) {
-                    items(sepet) { yemek ->
-                        var displayedAdet by remember {
-                            mutableStateOf(yemek.yemekSiparisAdet.toIntOrNull() ?: 0)
+                    items(sepet!!, key = { it.sepetYemekId }) { yemek ->
+                        var displayedAdet by remember(yemek.sepetYemekId) {
+                            mutableStateOf(
+                                displayedQuantities[yemek.sepetYemekId]
+                                    ?: yemek.yemekSiparisAdet.toIntOrNull() ?: 0
+                            )
                         }
+
                         val basePrice = yemek.yemekFiyat.toIntOrNull() ?: 0
-                        val totalPrice = basePrice * displayedAdet
+                        var totalPriceForEach = basePrice * displayedAdet
                         Card(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -178,7 +215,7 @@ fun CartPage(cartViewModel: CartPageViewModel = hiltViewModel(), navController: 
                                         fontSize = 20.sp
                                     )
                                     Text(
-                                        text = "${totalPrice}₺",
+                                        text = "${totalPriceForEach}₺",
                                         fontWeight = FontWeight.Bold,
                                         fontSize = 17.sp
                                     )
@@ -193,7 +230,15 @@ fun CartPage(cartViewModel: CartPageViewModel = hiltViewModel(), navController: 
                                         Button(
                                             onClick = {
                                                 if (displayedAdet > 1) {
-                                                    displayedAdet--
+                                                    val newQuantity = displayedAdet - 1
+                                                    displayedAdet = newQuantity
+                                                    displayedQuantities[yemek.sepetYemekId] =
+                                                        newQuantity
+                                                }else{
+                                                    val yemekIdInt = yemek.sepetYemekId.toIntOrNull()
+                                                    if (yemekIdInt != null) {
+                                                        cartViewModel.yemekSil(yemekIdInt)
+                                                    }
                                                 }
                                             }, shape = RoundedCornerShape(10.dp),
                                             colors = ButtonDefaults.buttonColors(
@@ -231,7 +276,12 @@ fun CartPage(cartViewModel: CartPageViewModel = hiltViewModel(), navController: 
                                                 .padding(start = 8.dp, end = 8.dp)
                                         )
                                         Button(
-                                            onClick = { displayedAdet++ },
+                                            onClick = {
+                                                val newQuantity = displayedAdet + 1
+                                                displayedAdet = newQuantity
+                                                displayedQuantities[yemek.sepetYemekId] =
+                                                    newQuantity
+                                            },
                                             shape = RoundedCornerShape(10.dp),
                                             colors = ButtonDefaults.buttonColors(
                                                 containerColor = Color(0xFF4CAF50),

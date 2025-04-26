@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.yemekcim.data.entity.SepetYemek
 import com.example.yemekcim.data.repo.YemeklerRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -26,4 +27,24 @@ class CartPageViewModel @Inject constructor(private val repo: YemeklerRepository
             }
         }
     }
+
+    fun yemekSil(sepetYemekId: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val kullaniciAdi = "riza"
+
+                val silmeBasarili = repo.sepettenYemekSil(sepetYemekId, kullaniciAdi)
+
+                if (silmeBasarili) {
+                    Log.d("ViewModel", "Silme başarılı: ID=$sepetYemekId. Sepet yeniden yükleniyor.")
+                    sepettekiYemekleriGetir()
+                } else {
+                    Log.e("ViewModel", "API silme işlemi başarısız oldu: ID=$sepetYemekId")
+                }
+            } catch (e: Exception) {
+                Log.e("ViewModel", "yemekSil sırasında genel hata: ${e.localizedMessage}", e)
+            }
+        }
+    }
+
 }

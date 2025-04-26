@@ -34,4 +34,11 @@ interface YemeklerDao {
     suspend fun sepettekiYemekleriGetir(
         @Field("kullanici_adi") kullaniciAdi: String
     ): SepetYemekCevap
+
+    @FormUrlEncoded
+    @POST("yemekler/sepettenYemekSil.php")
+    suspend fun sepettenYemekSil(
+        @Field("sepet_yemek_id") sepetYemekId: Int,
+        @Field("kullanici_adi") kullaniciAdi: String
+    ):CRUDanswer
 }

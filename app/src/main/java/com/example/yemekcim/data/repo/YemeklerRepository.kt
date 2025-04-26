@@ -1,6 +1,7 @@
 package com.example.yemekcim.data.repo
 
 //import com.example.yemekcim.data.datasource.YemeklerDataSource
+import android.util.Log
 import com.example.yemekcim.data.entity.SepetYemek
 import com.example.yemekcim.data.entity.Yemekler
 import com.example.yemekcim.retrofit.YemeklerDao
@@ -41,5 +42,16 @@ class YemeklerRepository @Inject constructor(
 
     suspend fun sepettekiYemekleriGetir(kullaniciAdi: String): List<SepetYemek> {
         return yemeklerDao.sepettekiYemekleriGetir(kullaniciAdi).sepetYemekler
+    }
+
+    suspend fun sepettenYemekSil(sepetYemekId: Int, kullaniciAdi: String): Boolean {
+        return try {
+            val response = yemeklerDao.sepettenYemekSil(sepetYemekId, kullaniciAdi)
+            Log.d("Repository", "Sepetten Silme Cevabı: Success=${response.success}, Message=${response.message}")
+            response.success == 1
+        } catch (e: Exception) {
+            Log.e("Repository", "Sepetten Silme Hatası: ${e.localizedMessage}", e)
+            false
+        }
     }
 }
