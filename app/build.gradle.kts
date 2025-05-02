@@ -110,7 +110,14 @@ dependencies {
     //icon
     implementation("androidx.compose.material:material-icons-extended")
 
+    //location service
+    implementation("com.google.android.gms:play-services-location:21.3.0")
 
+    //AndroidX Security
+    implementation("androidx.security:security-crypto-ktx:1.1.0-alpha07")
+
+    //JBCrypt
+    implementation(libs.jbcrypt)
 
 
 }

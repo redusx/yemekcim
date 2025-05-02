@@ -1,6 +1,5 @@
 package com.example.yemekcim.data.repo
 
-//import com.example.yemekcim.data.datasource.YemeklerDataSource
 import android.util.Log
 import com.example.yemekcim.data.entity.SepetYemek
 import com.example.yemekcim.data.entity.Yemekler
@@ -8,10 +7,6 @@ import com.example.yemekcim.retrofit.YemeklerDao
 import javax.inject.Inject
 import javax.inject.Singleton
 
-//class YemeklerRepository(var yds: YemeklerDataSource){
-//
-//    suspend fun tumYemekleriGetir() : List<Yemekler> = yds.tumYemekleriGetir()
-//}
 
 @Singleton
 class YemeklerRepository @Inject constructor(

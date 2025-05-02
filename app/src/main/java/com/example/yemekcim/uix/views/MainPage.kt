@@ -29,10 +29,12 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -81,175 +83,182 @@ fun MainPage(navController: NavController, mainViewModel: MainPageViewModel) {
     LaunchedEffect(key1 = true) {
         mainViewModel.tumYemekleriGetir()
     }
-
-    Column(
+    Scaffold(
         modifier = Modifier
             .windowInsetsPadding(WindowInsets.statusBars)
-            .windowInsetsPadding(WindowInsets.navigationBars)
-            .fillMaxSize(),
-        verticalArrangement = Arrangement.Top,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Text(
-                text = "Merhaba, $userName!",
-                modifier = Modifier
-                    .padding(start = 10.dp)
-                    .graphicsLayer(alpha = 0.5f)
-            )
-        }
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 2.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Text(
-                text = "Ben YEMEKÇİM\nBugün ne yemek istersin?",
-                modifier = Modifier
-                    .padding(start = 10.dp),
-                style = TextStyle(fontWeight = FontWeight.Bold, fontSize = 24.sp),
-                fontFamily = FontFamily(Font(R.font.datang_story))
-            )
-        }
-        TextField(
-            value = query.value,
-            onValueChange = { query.value = it },
-            label = { Text("Arama") },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(10.dp)
-                .clip(RoundedCornerShape(20.dp)),
-            leadingIcon = {
-                Icon(Icons.Default.Search, contentDescription = "Search")
-            },
-            colors = TextFieldDefaults.textFieldColors(
-                containerColor = Color(0xFFe6e7e8),
-                focusedLabelColor = Color.Black,
-                focusedIndicatorColor = Color.White,
-                unfocusedLabelColor = Color.Black,
-                unfocusedIndicatorColor = Color.White
-            )
-        )
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 0.dp)
-        ) {
-            LazyHorizontalGrid(
-                rows = GridCells.Fixed(1),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(150.dp)
-                    .padding(start = 10.dp, bottom = 0.dp),
-                contentPadding = PaddingValues(0.dp)
-            ) {
-                items(buttonLabels.size) { index ->
-                    Column(
-                        modifier = Modifier.padding(end = 15.dp, bottom = 10.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Button(
-                            onClick = {
-                                filterButton.value = "$index"
-
-                            },
-                            modifier = Modifier.size(70.dp, 100.dp),
-                            shape = RoundedCornerShape(30.dp),
-                            colors = ButtonColors(
-                                containerColor = Color(0xFFe6e7e8),
-                                contentColor = Color.Black,
-                                disabledContentColor = Color.LightGray,
-                                disabledContainerColor = Color.LightGray
-                            ),
-                            contentPadding = PaddingValues(0.dp)
-                        ) {
-                            Icon(
-                                painter = painterResource(
-                                    id = when (index) {
-                                        0 -> R.drawable.popular
-                                        1 -> R.drawable.food
-                                        2 -> R.drawable.drink
-                                        3 -> R.drawable.dessert
-                                        4 -> R.drawable.ice_cream
-                                        else -> R.drawable.popular
-                                    }
-                                ),
-                                contentDescription = "",
-                                modifier = Modifier.size(60.dp, 40.dp)
-                            )
-                        }
-                        Spacer(modifier = Modifier.height(6.dp))
-                        Text(
-                            text = buttonLabels[index],
-                            fontSize = 14.sp,
-                            textAlign = TextAlign.Center
-                        )
-                    }
-                }
-            }
-        }
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 10.dp)
-        ) {
-            Text(
-                text = "$contextName",
-                fontSize = 24.sp,
-                fontWeight = FontWeight.Bold,
-            )
-        }
-
-
-        Box(
+            .windowInsetsPadding(WindowInsets.navigationBars),
+        bottomBar = { BottomBar(navController = navController) }
+    ) { innerPadding ->
+        Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(top = 4.dp, start = 10.dp, end = 10.dp, bottom = 56.dp)
+                .padding(innerPadding),
+            verticalArrangement = Arrangement.Top,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            LazyVerticalGrid(
-                modifier = Modifier.fillMaxSize().navigationBarsPadding(),
-                columns = GridCells.Fixed(2),
-                horizontalArrangement = Arrangement.spacedBy(10.dp),
-                contentPadding = PaddingValues(bottom = 24.dp)
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
             ) {
-                items(seciliKategoriYemekler) { id ->
-                    val yemek = yemekler.find { it.yemek_id == id }
+                Text(
+                    text = "Merhaba, $userName!",
+                    modifier = Modifier
+                        .padding(start = 10.dp)
+                        .graphicsLayer(alpha = 0.5f)
+                )
+            }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 2.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    text = "Ben YEMEKÇİM\nBugün ne yemek istersin?",
+                    modifier = Modifier
+                        .padding(start = 10.dp),
+                    style = TextStyle(fontWeight = FontWeight.Bold, fontSize = 24.sp),
+                    fontFamily = FontFamily(Font(R.font.datang_story))
+                )
+            }
+            TextField(
+                value = query.value,
+                onValueChange = { query.value = it },
+                label = { Text("Arama") },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(10.dp)
+                    .clip(RoundedCornerShape(20.dp)),
+                leadingIcon = {
+                    Icon(Icons.Default.Search, contentDescription = "Search")
+                },
+                colors = TextFieldDefaults.textFieldColors(
+                    containerColor = Color(0xFFe6e7e8),
+                    focusedLabelColor = Color.Black,
+                    focusedIndicatorColor = Color.White,
+                    unfocusedLabelColor = Color.Black,
+                    unfocusedIndicatorColor = Color.White
+                )
+            )
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 0.dp)
+            ) {
+                LazyHorizontalGrid(
+                    rows = GridCells.Fixed(1),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(150.dp)
+                        .padding(start = 10.dp, bottom = 0.dp),
+                    contentPadding = PaddingValues(0.dp)
+                ) {
+                    items(buttonLabels.size) { index ->
+                        Column(
+                            modifier = Modifier.padding(end = 15.dp, bottom = 10.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Button(
+                                onClick = {
+                                    filterButton.value = "$index"
 
-                    yemek?.let {
-                        YemekKarti(yemek = it, mainViewModel = mainViewModel)
+                                },
+                                modifier = Modifier.size(70.dp, 100.dp),
+                                shape = RoundedCornerShape(30.dp),
+                                colors = ButtonColors(
+                                    containerColor = Color(0xFFe6e7e8),
+                                    contentColor = Color.Black,
+                                    disabledContentColor = Color.LightGray,
+                                    disabledContainerColor = Color.LightGray
+                                ),
+                                contentPadding = PaddingValues(0.dp)
+                            ) {
+                                Icon(
+                                    painter = painterResource(
+                                        id = when (index) {
+                                            0 -> R.drawable.popular
+                                            1 -> R.drawable.food
+                                            2 -> R.drawable.drink
+                                            3 -> R.drawable.dessert
+                                            4 -> R.drawable.ice_cream
+                                            else -> R.drawable.popular
+                                        }
+                                    ),
+                                    contentDescription = "",
+                                    modifier = Modifier.size(60.dp, 40.dp)
+                                )
+                            }
+                            Spacer(modifier = Modifier.height(6.dp))
+                            Text(
+                                text = buttonLabels[index],
+                                fontSize = 14.sp,
+                                textAlign = TextAlign.Center
+                            )
+                        }
+                    }
+                }
+            }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 10.dp)
+            ) {
+                Text(
+                    text = "$contextName",
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold,
+                )
+            }
+
+
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(top = 4.dp, start = 10.dp, end = 10.dp)
+            ) {
+                LazyVerticalGrid(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .navigationBarsPadding(),
+                    columns = GridCells.Fixed(2),
+                    horizontalArrangement = Arrangement.spacedBy(10.dp),
+                ) {
+                    items(seciliKategoriYemekler) { id ->
+                        val yemek = yemekler.find { it.yemek_id == id }
+
+                        yemek?.let {
+                            YemekKarti(yemek = it, mainViewModel = mainViewModel)
+                        }
                     }
                 }
             }
         }
-    }
 
-    //--------
-    //sepete ekle dialog
-    seciliYemek?.let { yemek ->
-        SepeteEkleDialog(
-            yemek = yemek,
-            onDismiss = { mainViewModel.closeDialog() },
-            onEkle = { adet ->
-                mainViewModel.sepeteEkle(yemek, adet)
-            }
-        )
+        //--------
+        //sepete ekle dialog
+        seciliYemek?.let { yemek ->
+            SepeteEkleDialog(
+                yemek = yemek,
+                onDismiss = { mainViewModel.closeDialog() },
+                onEkle = { adet ->
+                    mainViewModel.sepeteEkle(yemek, adet)
+                }
+            )
+        }
     }
 }
 
 
 @Composable
-fun YemekKarti(yemek: Yemekler,mainViewModel: MainPageViewModel) {
+fun YemekKarti(yemek: Yemekler, mainViewModel: MainPageViewModel) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight()
             .padding(bottom = 10.dp),
         shape = RoundedCornerShape(12.dp),
-        elevation = CardDefaults.elevatedCardElevation(defaultElevation = 6.dp)
+        elevation = CardDefaults.elevatedCardElevation(defaultElevation = 6.dp),
+        colors = CardDefaults.cardColors(containerColor = Color(0xFFe6e7e8))
     ) {
         Column(
             modifier = Modifier

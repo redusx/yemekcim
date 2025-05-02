@@ -28,63 +28,59 @@ import com.example.yemekcim.uix.viewModel.MainPageViewModel
 import com.example.yemekcim.uix.views.BottomBar
 import dagger.hilt.android.AndroidEntryPoint
 import android.provider.Settings
-import androidx.appcompat.app.AppCompatDelegate
+import com.example.yemekcim.uix.viewModel.AuthViewModel
+import com.example.yemekcim.uix.viewModel.StartDestination
+import com.example.yemekcim.uix.views.pageNav
 import kotlinx.coroutines.delay
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+    private val authViewModel: AuthViewModel by viewModels()
+    private val mainPWM: MainPageViewModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val mainPWM: MainPageViewModel by viewModels()
         enableEdgeToEdge()
         setContent {
             YemekcimTheme {
+                val startDestination by authViewModel.startDestination.collectAsState()
                 val isConnected by mainPWM.isConnected.collectAsState()
 
-                MainScreen(isConnected = isConnected, mainPageViewModel = mainPWM)
-            }
-        }
-    }
-}
-
-@Composable
-fun MainScreen(isConnected: Boolean, mainPageViewModel: MainPageViewModel) {
-    val context = LocalContext.current
-    var showLoadingScreen by remember { mutableStateOf(true) }
-
-    LaunchedEffect(key1 = true) {
-        delay(1000)
-        showLoadingScreen = false
-    }
-
-
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
-        when {
-            showLoadingScreen -> {
-                CircularProgressIndicator()
-            }
-
-            isConnected -> {
-                BottomBar(mainPageViewModel = mainPageViewModel, modifier = Modifier)
-            }
-
-            else -> {
-                InternetRequiredDialog(
-                    onWifiSettingsClick = {
-                        val intent = Intent(Settings.ACTION_WIFI_SETTINGS)
-                        if (intent.resolveActivity(context.packageManager) != null) {
-                            context.startActivity(intent)
-                        } else {
-                            Log.e("SettingsIntent", "Wi-Fi ayarları açılamadı.")
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    when (startDestination) {
+                        StartDestination.LOADING -> {
+                            CircularProgressIndicator()
                         }
-                    },
-                    onCloseAppClick = {
-                        (context as? ComponentActivity)?.finish()
+                        else -> {
+                            if (isConnected) {
+                                pageNav(
+                                    startRoute = startDestination.name,
+                                    authViewModel = authViewModel,
+                                    mainViewModel = mainPWM
+                                )
+                            }
+                            else {
+                                InternetRequiredDialog(
+                                    onWifiSettingsClick = {
+                                        val context = this@MainActivity // Context'i Activity'den al
+                                        val intent = Intent(Settings.ACTION_WIFI_SETTINGS)
+                                        if (intent.resolveActivity(context.packageManager) != null) {
+                                            context.startActivity(intent)
+                                        } else {
+                                            Log.e("SettingsIntent", "Wi-Fi ayarları açılamadı.")
+                                        }
+                                    },
+                                    onCloseAppClick = {
+                                        finish()
+                                    }
+                                )
+                            }
+                        }
                     }
-                )
+                }
             }
         }
     }
@@ -112,3 +108,4 @@ fun InternetRequiredDialog(
         }
     )
 }
+

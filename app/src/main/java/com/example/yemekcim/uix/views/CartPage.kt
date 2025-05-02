@@ -32,6 +32,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.DeleteForever
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -186,7 +187,8 @@ fun CartPage(
                         Card(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(5.dp)
+                                .padding(5.dp),
+                            colors = CardDefaults.cardColors(containerColor = Color(0xFFe6e7e8))
                         ) {
                             Row(
                                 verticalAlignment = Alignment.CenterVertically,
