@@ -75,22 +75,22 @@ class AuthViewModel @Inject constructor(
     // --- Event Handlers ---
 
     fun onUsernameChanged(username: String) {
-        _uiState.update { it.copy(username = username, errorMessage = null) }
+        _loginUiState.update { it.copy(username = username, errorMessage = null) }
     }
 
     fun onPasswordChanged(password: String) {
-        _uiState.update { it.copy(password = password, errorMessage = null) }
+        _loginUiState.update { it.copy(password = password, errorMessage = null) }
     }
 
     fun onLoginClicked() {
-        val currentState = _uiState.value
+        val currentState = _loginUiState.value
 
         if (currentState.username.isBlank() || currentState.password.isBlank()) {
-            _uiState.update { it.copy(errorMessage = "Kullanıcı adı ve şifre boş olamaz!") }
+            _loginUiState.update { it.copy(errorMessage = "Kullanıcı adı ve şifre boş olamaz!") }
             return
         }
 
-        _uiState.update { it.copy(isLoading = true, errorMessage = null) }
+        _loginUiState.update { it.copy(isLoading = true, errorMessage = null) }
 
         viewModelScope.launch(Dispatchers.IO) {
             try {
@@ -101,16 +101,26 @@ class AuthViewModel @Inject constructor(
 
                 if (loginSuccess) {
                     Log.d("AuthViewModel", "Login successful for ${currentState.username}")
-                    _uiState.update { it.copy(isLoading = false) }
+                    _loginUiState.update { it.copy(isLoading = false) }
                     userAuthenticated()
                     _navigateToMain.tryEmit(Unit)
                 } else {
                     Log.d("AuthViewModel", "Login failed for ${currentState.username}")
-                    _uiState.update { it.copy(isLoading = false, errorMessage = "Kullanıcı adı veya şifre hatalı!") }
+                    _loginUiState.update {
+                        it.copy(
+                            isLoading = false,
+                            errorMessage = "Kullanıcı adı veya şifre hatalı!"
+                        )
+                    }
                 }
             } catch (e: Exception) {
                 Log.e("AuthViewModel", "Login error: ${e.localizedMessage}", e)
-                _uiState.update { it.copy(isLoading = false, errorMessage = "Bir hata oluştu: ${e.message}") }
+                _loginUiState.update {
+                    it.copy(
+                        isLoading = false,
+                        errorMessage = "Giriş sırasında bir hata oluştu. İnternet bağlantınızı kontrol edin veya daha sonra tekrar deneyin."
+                    )
+                }
             }
         }
     }
@@ -182,7 +192,7 @@ class AuthViewModel @Inject constructor(
             try {
                 val hasUser = userRepository.hasRegisteredUser()
                 if (hasUser) {
-                    // Kayıtlı kullanıcı VARSA: Ana Ekrana (BottomBar'ın olduğu yer)
+                    // Kayıtlı kullanıcı VARSA: Ana Ekrana
                     // TODO: Daha sonra buraya "giriş yapılmış mı" kontrolü eklenmeli.
                     _startDestination.value = StartDestination.MAIN
                     Log.d("AuthViewModel", "User found, navigating to MAIN")
@@ -193,13 +203,20 @@ class AuthViewModel @Inject constructor(
                 }
             } catch (e: Exception) {
                 Log.e("AuthViewModel", "Error checking user status: ${e.message}", e)
-                // Hata durumunda varsayılan olarak Kayıt veya Giriş ekranına yönlendirilebilir
-                _startDestination.value = StartDestination.REGISTER // Veya LOGIN
+                _startDestination.value = StartDestination.REGISTER
             }
         }
     }
 
     fun userAuthenticated() {
         _startDestination.value = StartDestination.MAIN
+    }
+
+    // --- Hata Dialog'unu Kapatmak İçin ---
+    fun dismissLoginErrorDialog() {
+        _loginUiState.update { it.copy(errorMessage = null) }
+    }
+    fun dismissRegisterErrorDialog() {
+        _registerUiState.update { it.copy(errorMessage = null) }
     }
 }

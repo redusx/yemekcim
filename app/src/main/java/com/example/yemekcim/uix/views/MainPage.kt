@@ -1,6 +1,5 @@
 package com.example.yemekcim.uix.views
 
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -29,7 +28,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -59,7 +57,6 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.yemekcim.R
 import com.example.yemekcim.uix.viewModel.MainPageViewModel
-import com.example.yemekcim.uix.views.SepeteEkleDialog
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.layout.ContentScale
@@ -132,6 +129,7 @@ fun MainPage(navController: NavController, mainViewModel: MainPageViewModel) {
                 leadingIcon = {
                     Icon(Icons.Default.Search, contentDescription = "Search")
                 },
+                singleLine = true,
                 colors = TextFieldDefaults.textFieldColors(
                     containerColor = Color(0xFFe6e7e8),
                     focusedLabelColor = Color.Black,

@@ -33,6 +33,7 @@ import androidx.compose.material.icons.filled.DeleteForever
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -49,6 +50,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.compose.runtime.mutableStateMapOf
 import com.example.yemekcim.data.entity.SepetYemek
+import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -108,39 +110,56 @@ fun CartPage(
         },
         bottomBar = {
             if (!sepet.isNullOrEmpty()) {
-                Column(
+                Card(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .background(MaterialTheme.colorScheme.surfaceVariant)
-                        .navigationBarsPadding()
-                ) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 16.dp, vertical = 8.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text("Toplam Tutar:", fontWeight = FontWeight.ExtraBold, fontSize = 20.sp)
-                        Text(
-                            "$totalCartPrice ₺",
-                            fontWeight = FontWeight.ExtraBold,
-                            fontSize = 20.sp
-                        )
-                    }
+                        .padding(start = 5.dp, end = 5.dp)
+                        .navigationBarsPadding(),
+                    shape = RoundedCornerShape(
+                        topStart = 10.dp,
+                        topEnd = 10.dp,
+                        bottomEnd = 0.dp,
+                        bottomStart = 0.dp)
 
-                    Button(
-                        onClick = { /* Siparişi Onayla */ },
+                ) {
+                    Column(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(56.dp),
-                        shape = RoundedCornerShape(2.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = Color(0xFF4CAF50),
-                            contentColor = Color.White
-                        )
+                            .background(MaterialTheme.colorScheme.surfaceVariant)
                     ) {
-                        Text("Siparişi Onayla", fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 16.dp, vertical = 8.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                "Toplam Tutar:",
+                                fontWeight = FontWeight.ExtraBold,
+                                fontSize = 20.sp
+                            )
+                            Text(
+                                "$totalCartPrice ₺",
+                                fontWeight = FontWeight.ExtraBold,
+                                fontSize = 20.sp
+                            )
+                        }
+
+                        Button(
+                            onClick = { /* Siparişi Onayla */ },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(56.dp),
+                            shape = RoundedCornerShape(10.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color(0xFF4CAF50),
+                                contentColor = Color.White
+                            ),
+                            contentPadding = PaddingValues(0.dp)
+                        ) {
+                            Text("Sepeti Onayla", fontSize = 25.sp, fontWeight = FontWeight.Bold)
+                        }
                     }
                 }
             }
@@ -160,7 +179,7 @@ fun CartPage(
                     fontSize = 30.sp,
                     modifier = Modifier
                         .align(Alignment.CenterHorizontally)
-                        .padding(start = 5.dp)
+                        .padding(start = 15.dp)
                 )
             }
         } else {
@@ -170,9 +189,7 @@ fun CartPage(
                     .padding(innerPadding)
             ) {
                 LazyColumn(
-                    modifier = Modifier
-                        .fillMaxSize(),
-                    // contentPadding = PaddingValues(bottom = 80.dp)
+                    modifier = Modifier.fillMaxSize()
                 ) {
                     items(sepet!!, key = { it.sepetYemekId }) { yemek ->
                         var displayedAdet by remember(yemek.sepetYemekId) {

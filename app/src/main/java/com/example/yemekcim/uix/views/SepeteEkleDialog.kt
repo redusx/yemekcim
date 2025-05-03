@@ -2,6 +2,7 @@ package com.example.yemekcim.uix.views
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -80,9 +81,37 @@ fun SepeteEkleDialog(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Button(onClick = { if (adet > 1) adet-- },shape = RoundedCornerShape(10.dp)) { Text("-") }
-                    Text(text = adet.toString(), modifier = Modifier.padding(horizontal = 16.dp))
-                    Button(onClick = { adet++ },shape = RoundedCornerShape(10.dp)) { Text("+") }
+                    Button(
+                        onClick = { if (adet > 1) adet-- },
+                        shape = RoundedCornerShape(10.dp),
+                        contentPadding = PaddingValues(0.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color(0xFF4CAF50),
+                            contentColor = Color.White
+                        )
+                    ) {
+                        Text(
+                            text = "-",
+                            fontWeight = FontWeight.ExtraBold,
+                            fontSize = 30.sp
+                        )
+                    }
+                    Text(text = adet.toString(), modifier = Modifier.padding(horizontal = 16.dp), fontSize = 27.sp)
+                    Button(
+                        onClick = { adet++ },
+                        shape = RoundedCornerShape(10.dp),
+                        contentPadding = PaddingValues(0.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color(0xFF4CAF50),
+                            contentColor = Color.White
+                        )
+                    ) {
+                        Text(
+                            text = "+",
+                            fontWeight = FontWeight.ExtraBold,
+                            fontSize = 30.sp
+                        )
+                    }
                 }
                 Spacer(modifier = Modifier.height(4.dp))
                 Row(
@@ -92,7 +121,9 @@ fun SepeteEkleDialog(
                 ) {
                     Button(
                         onClick = onDismiss,
-                        Modifier.padding(start = 15.dp, end = 5.dp).weight(1f),
+                        Modifier
+                            .padding(start = 15.dp, end = 5.dp)
+                            .weight(1f),
                         shape = RoundedCornerShape(10.dp),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = Color.Red,
@@ -106,7 +137,9 @@ fun SepeteEkleDialog(
                             onEkle(adet)
                             onDismiss()
                         },
-                        modifier = Modifier.padding(end = 15.dp, start = 5.dp).weight(1f),
+                        modifier = Modifier
+                            .padding(end = 15.dp, start = 5.dp)
+                            .weight(1f),
                         shape = RoundedCornerShape(10.dp),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = Color(0xFF4CAF50),

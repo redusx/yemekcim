@@ -12,8 +12,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -33,6 +36,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -56,6 +60,31 @@ fun RegisterPage(
                 popUpTo(StartDestination.REGISTER.name) { inclusive = true }
             }
         }
+    }
+
+    if (uiState.errorMessage != null) {
+        AlertDialog(
+            onDismissRequest = { },
+            title = { Text("Kayıt İşlemi Başarısız") },
+            text = { Text(uiState.errorMessage!!) },
+            confirmButton = {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    Button(
+                        onClick = { authViewModel.dismissRegisterErrorDialog() },
+                        shape = RoundedCornerShape(10.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color(0xFF4CAF50),
+                            contentColor = Color.White
+                        )
+                    ) {
+                        Text("Tamam")
+                    }
+                }
+            }
+        )
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
@@ -104,7 +133,9 @@ fun RegisterPage(
                     focusedIndicatorColor = Color.Transparent,
                     unfocusedIndicatorColor = Color.Transparent,
                 ),
-                label = { Text("Kullanıcı Adı") })
+                isError = uiState.errorMessage != null,
+                label = { Text("Kullanıcı Adı") },
+                singleLine = true)
             Spacer(modifier = Modifier.height(10.dp))
             TextField(
                 value = uiState.password,
@@ -117,8 +148,10 @@ fun RegisterPage(
                     focusedIndicatorColor = Color.Transparent,
                     unfocusedIndicatorColor = Color.Transparent,
                 ),
+                isError = uiState.errorMessage != null,
                 label = { Text("Şifre")
-                })
+                },
+                singleLine = true)
             Spacer(modifier = Modifier.height(10.dp))
             TextField(
                 value = uiState.email,
@@ -131,6 +164,9 @@ fun RegisterPage(
                     focusedIndicatorColor = Color.Transparent,
                     unfocusedIndicatorColor = Color.Transparent,
                 ),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+                singleLine = true,
+                isError = uiState.errorMessage != null,
                 label = { Text("E-posta Adresi") })
             Spacer(modifier = Modifier.height(10.dp))
             Button(
@@ -142,7 +178,8 @@ fun RegisterPage(
                 colors = ButtonDefaults.buttonColors(containerColor = Color.DarkGray),
                 contentPadding = PaddingValues(0.dp)
             ) {
-                Text(text = "Kayıt Ol", fontSize = 22.sp, fontWeight = FontWeight.Bold)
+                if (uiState.isLoading) { CircularProgressIndicator() }else{
+                Text(text = "Kayıt Ol", fontSize = 22.sp, fontWeight = FontWeight.Bold)}
             }
             Spacer(modifier = Modifier.height(2.dp))
             Row(
