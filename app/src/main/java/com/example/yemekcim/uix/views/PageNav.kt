@@ -10,31 +10,45 @@ import com.example.yemekcim.uix.viewModel.AuthViewModel
 import com.example.yemekcim.uix.viewModel.MainPageViewModel
 import androidx.compose.runtime.getValue
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
+import androidx.navigation.navArgument
 import com.example.yemekcim.uix.viewModel.StartDestination
 
 
 @Composable
-fun pageNav(mainViewModel: MainPageViewModel,startRoute: String,authViewModel: AuthViewModel){
+fun pageNav(mainViewModel: MainPageViewModel, startRoute: String, authViewModel: AuthViewModel) {
     val navController: NavHostController = rememberNavController()
 
-    NavHost(navController =navController, startDestination =startRoute ){
-        composable(StartDestination.MAIN.name){
+    NavHost(navController = navController, startDestination = startRoute) {
+        composable(StartDestination.MAIN.name) {
             MainPage(navController = navController, mainViewModel = mainViewModel)
         }
-        composable("profilePage"){
-            ProfilePage(navController=navController)
+        composable("profilePage") {
+            ProfilePage(navController = navController)
         }
-        composable("cartPage"){
-            CartPage(
-                navController = navController,
-                onBack = { navController.navigate(StartDestination.MAIN.name)
-                { popUpTo(StartDestination.MAIN.name){ inclusive = true } } })
+        composable("cartPage") {
+            CartPage(navController = navController)
         }
-        composable(StartDestination.REGISTER.name){
+        composable(StartDestination.REGISTER.name) {
             RegisterPage(navController, authViewModel)
         }
-        composable(StartDestination.LOGIN.name){
-             LoginPage(navController, authViewModel)
+        composable(StartDestination.LOGIN.name) {
+            LoginPage(navController, authViewModel)
+        }
+        composable(
+            "confirmScreen/{totalPrice}",
+            arguments = listOf(navArgument("totalPrice") { type = NavType.IntType })
+        ) { backStackEntry ->
+
+            val totalPrice = backStackEntry.arguments?.getInt("totalPrice") ?: 0
+
+            CartConfirmScreen(
+                totalPrice = totalPrice,
+                navController = navController
+            )
+        }
+        composable("ordercpage") {
+            OrderConfirmedPage(navController = navController)
         }
     }
 }

@@ -35,7 +35,7 @@ class YemeklerRepository @Inject constructor(
     ) = yemeklerDao.sepeteYemekEkle(yemekAdi, yemekResimAdi, yemekFiyat, yemekSiparisAdet, kullaniciAdi)
 
 
-    suspend fun sepettekiYemekleriGetir(kullaniciAdi: String): List<SepetYemek> {
+    suspend fun sepettekiYemekleriGetir(kullaniciAdi:String): List<SepetYemek> {
         return yemeklerDao.sepettekiYemekleriGetir(kullaniciAdi).sepetYemekler
     }
 

@@ -1,6 +1,8 @@
 package com.example.yemekcim.uix.views
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,6 +14,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -25,11 +29,15 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -38,26 +46,34 @@ import androidx.navigation.NavController
 import com.example.yemekcim.R
 import com.example.yemekcim.uix.viewModel.AuthViewModel
 import com.example.yemekcim.uix.viewModel.StartDestination
+import com.example.yemekcim.uix.viewModel.UserSessionViewModel
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 @Composable
 fun LoginPage(
     navController: NavController,
-    authViewModel: AuthViewModel = hiltViewModel()
+    authViewModel: AuthViewModel = hiltViewModel(),
 ){
+    val userSessionViewModel: UserSessionViewModel = hiltViewModel()
     val uiState by authViewModel.loginUiState.collectAsState()
+    val focusManager = LocalFocusManager.current
 
-    LaunchedEffect(key1 = Unit){
-        authViewModel.navigateToMain.collectLatest{
-            navController.navigate(StartDestination.MAIN.name){
-                popUpTo(StartDestination.LOGIN.name){inclusive=true}
+    LaunchedEffect(Unit) {
+        authViewModel.clearLoginState()
+
+        launch {
+            authViewModel.navigateToMain.collectLatest {
+                navController.navigate(StartDestination.MAIN.name) {
+                    popUpTo(StartDestination.LOGIN.name) { inclusive = true }
+                }
             }
         }
-    }
 
-    LaunchedEffect(key1 = Unit){
-        authViewModel.navigateToRegister.collectLatest {
-            navController.navigate(StartDestination.REGISTER.name)
+        launch {
+            authViewModel.navigateToRegister.collectLatest {
+                navController.navigate(StartDestination.REGISTER.name)
+            }
         }
     }
 
@@ -94,7 +110,14 @@ fun LoginPage(
             contentScale = ContentScale.Crop
         )
         Column(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxSize()
+                .clickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = null
+                ) {
+                    focusManager.clearFocus()
+                },
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         )
@@ -122,6 +145,12 @@ fun LoginPage(
                 shape = RoundedCornerShape(size = 10.dp),
                 isError = uiState.errorMessage != null,
                 singleLine = true,
+                keyboardOptions = KeyboardOptions(
+                    imeAction = ImeAction.Next
+                ),
+                keyboardActions = KeyboardActions(
+                    onNext = { focusManager.moveFocus(FocusDirection.Down) }
+                ),
                 colors = TextFieldDefaults.colors(
                     focusedIndicatorColor = Color.Transparent,
                     unfocusedIndicatorColor = Color.Transparent,
@@ -142,11 +171,20 @@ fun LoginPage(
                 singleLine = true,
                 isError = uiState.errorMessage != null,
                 label = { Text("Şifre") },
+                keyboardOptions = KeyboardOptions(
+                    imeAction = ImeAction.Done
+                ),
+                keyboardActions = KeyboardActions(
+                    onNext = { focusManager.clearFocus() }
+                ),
                 visualTransformation = PasswordVisualTransformation()
             )
             Spacer(modifier = Modifier.height(10.dp))
             Button(
-                onClick ={authViewModel.onLoginClicked()},
+                onClick ={
+                    userSessionViewModel.setUsername(uiState.username)
+                    authViewModel.onLoginClicked()
+                },
                 enabled = !uiState.isLoading,
                 shape = RoundedCornerShape(size = 10.dp),
                 modifier = Modifier

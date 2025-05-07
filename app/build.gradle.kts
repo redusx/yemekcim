@@ -76,7 +76,9 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.7")
 
     //Preferences Datastore
-    implementation("androidx.datastore:datastore-preferences:1.0.0")
+    implementation("androidx.datastore:datastore-preferences:1.1.0")
+
+
 
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.6.2")
     api("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")

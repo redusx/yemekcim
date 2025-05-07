@@ -18,26 +18,31 @@ class CartPageViewModel @Inject constructor(private val repo: YemeklerRepository
     private val _sepetListesi = mutableStateOf<List<SepetYemek>>(emptyList())
     val sepetListesi: State<List<SepetYemek>> = _sepetListesi
 
-    fun sepettekiYemekleriGetir(kullaniciAdi: String = "riza") {
+    private val _totalCartPrice = mutableStateOf(0)
+    val totalCartPrice: State<Int> = _totalCartPrice
+
+    fun sepettekiYemekleriGetir(kullaniciAdi:String) {
         viewModelScope.launch {
             try {
                 _sepetListesi.value = repo.sepettekiYemekleriGetir(kullaniciAdi)
+                if(_sepetListesi.value.isNullOrEmpty()){_sepetListesi.value= emptyList()
+                }
+                Log.d("Sepet", "Sepetteki yemekler başarıyla yüklendi: ${kullaniciAdi}")
             } catch (e: Exception) {
+                _sepetListesi.value= emptyList()
                 Log.e("Sepet", "Sepet çekilemedi: ${e.localizedMessage}")
             }
         }
     }
 
-    fun yemekSil(sepetYemekId: Int) {
+    fun yemekSil(sepetYemekId: Int,kullaniciAdi:String) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val kullaniciAdi = "riza"
-
                 val silmeBasarili = repo.sepettenYemekSil(sepetYemekId, kullaniciAdi)
 
                 if (silmeBasarili) {
                     Log.d("ViewModel", "Silme başarılı: ID=$sepetYemekId. Sepet yeniden yükleniyor.")
-                    sepettekiYemekleriGetir()
+                    sepettekiYemekleriGetir(kullaniciAdi)
                 } else {
                     Log.e("ViewModel", "API silme işlemi başarısız oldu: ID=$sepetYemekId")
                 }
@@ -45,6 +50,10 @@ class CartPageViewModel @Inject constructor(private val repo: YemeklerRepository
                 Log.e("ViewModel", "yemekSil sırasında genel hata: ${e.localizedMessage}", e)
             }
         }
+    }
+
+    fun setTotalCartPrice(value: Int) {
+        _totalCartPrice.value = value
     }
 
 }

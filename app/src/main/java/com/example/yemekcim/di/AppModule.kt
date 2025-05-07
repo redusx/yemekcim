@@ -2,6 +2,7 @@ package com.example.yemekcim.di
 
 import android.content.Context
 import android.net.ConnectivityManager
+import com.example.yemekcim.data.local.DataStoreManager
 //import com.example.yemekcim.data.datasource.YemeklerDataSource
 import com.example.yemekcim.data.repo.YemeklerRepository
 import com.example.yemekcim.retrofit.YemeklerDao
@@ -47,5 +48,11 @@ object AppModule {
     @Singleton
     fun provideYemeklerApiService(retrofit: Retrofit): YemeklerDao {
         return retrofit.create(YemeklerDao::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideDataStoreManager(@ApplicationContext context: Context): DataStoreManager {
+        return DataStoreManager(context)
     }
 }

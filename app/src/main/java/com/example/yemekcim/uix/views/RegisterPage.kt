@@ -1,6 +1,8 @@
 package com.example.yemekcim.uix.views
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,12 +14,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
@@ -25,26 +27,26 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.runtime.setValue
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.yemekcim.R
-import com.example.yemekcim.ui.theme.YemekcimTheme
 import com.example.yemekcim.uix.viewModel.AuthViewModel
 import com.example.yemekcim.uix.viewModel.StartDestination
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 @Composable
 fun RegisterPage(
@@ -52,15 +54,21 @@ fun RegisterPage(
     authViewModel: AuthViewModel
 ){
     val uiState by authViewModel.registerUiState.collectAsState()
+    val focusManager = LocalFocusManager.current
 
-    // --- Navigation Event Listener ---
-    LaunchedEffect(key1 = Unit) {
-        authViewModel.navigateToLogin.collectLatest {
-            navController.navigate(StartDestination.LOGIN.name) {
-                popUpTo(StartDestination.REGISTER.name) { inclusive = true }
+    LaunchedEffect(Unit) {
+        authViewModel.clearRegisterState()
+
+        // --- Navigation Event Listener ---
+        launch {
+            authViewModel.navigateToLogin.collectLatest {
+                navController.navigate(StartDestination.LOGIN.name) {
+                    popUpTo(StartDestination.REGISTER.name) { inclusive = true }
+                }
             }
         }
     }
+
 
     if (uiState.errorMessage != null) {
         AlertDialog(
@@ -94,16 +102,15 @@ fun RegisterPage(
             modifier = Modifier.fillMaxSize(),
             contentScale = ContentScale.Crop
         )
-        if (uiState.errorMessage != null) {
-            Text(
-                text = uiState.errorMessage!!,
-                color = MaterialTheme.colorScheme.error,
-                style = MaterialTheme.typography.bodySmall,
-                modifier = Modifier.padding(bottom = 12.dp)
-            )
-        }
         Column(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxSize()
+                .clickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = null
+                ) {
+                    focusManager.clearFocus()
+                },
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         )
@@ -117,8 +124,6 @@ fun RegisterPage(
                     fontSize = 35.sp,
                     fontWeight = FontWeight.ExtraBold,
                     color = Color.White,
-
-
                     )
             }
             Spacer(modifier = Modifier.height(12.dp))
@@ -134,8 +139,15 @@ fun RegisterPage(
                     unfocusedIndicatorColor = Color.Transparent,
                 ),
                 isError = uiState.errorMessage != null,
+                keyboardOptions = KeyboardOptions(
+                    imeAction = ImeAction.Next
+                ),
+                keyboardActions = KeyboardActions(
+                    onNext = { focusManager.moveFocus(FocusDirection.Down) }
+                ),
                 label = { Text("Kullanıcı Adı") },
-                singleLine = true)
+                singleLine = true
+            )
             Spacer(modifier = Modifier.height(10.dp))
             TextField(
                 value = uiState.password,
@@ -147,6 +159,12 @@ fun RegisterPage(
                 colors = TextFieldDefaults.colors(
                     focusedIndicatorColor = Color.Transparent,
                     unfocusedIndicatorColor = Color.Transparent,
+                ),
+                keyboardOptions = KeyboardOptions(
+                    imeAction = ImeAction.Next
+                ),
+                keyboardActions = KeyboardActions(
+                    onNext = { focusManager.moveFocus(FocusDirection.Down) }
                 ),
                 isError = uiState.errorMessage != null,
                 label = { Text("Şifre")
@@ -164,10 +182,16 @@ fun RegisterPage(
                     focusedIndicatorColor = Color.Transparent,
                     unfocusedIndicatorColor = Color.Transparent,
                 ),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Email,
+                    imeAction = ImeAction.Done
+                ),
+                keyboardActions = KeyboardActions(
+                    onNext = { focusManager.clearFocus() }
+                ),
                 singleLine = true,
                 isError = uiState.errorMessage != null,
-                label = { Text("E-posta Adresi") })
+                label = { Text("E-Posta Adresi") })
             Spacer(modifier = Modifier.height(10.dp))
             Button(
                 onClick = {authViewModel.onRegisterClicked()},

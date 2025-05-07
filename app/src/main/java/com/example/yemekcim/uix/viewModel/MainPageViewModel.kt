@@ -99,7 +99,7 @@ class MainPageViewModel @Inject constructor(
         "4" to listOf() // Dondurma kategorisi boş
     )
 
-    fun sepeteEkle(yemek: Yemekler, adet: Int, kullaniciAdi: String = "riza") {
+    fun sepeteEkle(yemek: Yemekler, adet: Int, kullaniciAdi: String) {
         viewModelScope.launch {
             try {
                 val response = yemeklerRepository.sepeteYemekEkle(

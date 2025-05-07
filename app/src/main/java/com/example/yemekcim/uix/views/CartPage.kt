@@ -1,6 +1,6 @@
 package com.example.yemekcim.uix.views
 
-import androidx.activity.compose.BackHandler
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -33,13 +33,13 @@ import androidx.compose.material.icons.filled.DeleteForever
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBar
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -50,6 +50,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.compose.runtime.mutableStateMapOf
 import com.example.yemekcim.data.entity.SepetYemek
+import com.example.yemekcim.uix.viewModel.UserSessionViewModel
 import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -57,17 +58,17 @@ import kotlinx.coroutines.delay
 fun CartPage(
     cartViewModel: CartPageViewModel = hiltViewModel(),
     navController: NavController,
-    onBack: () -> Unit
+    userSessionViewModel: UserSessionViewModel = hiltViewModel()
 ) {
+    val username by userSessionViewModel.usernameFlow.collectAsState(initial = "")
     val sepet: List<SepetYemek> by cartViewModel.sepetListesi
     val displayedQuantities = remember { mutableStateMapOf<String, Int>() }
 
-    BackHandler {
-        onBack()
-    }
+    Log.d("Page_DEBUG", "Current username in Composable: $username")
 
-    LaunchedEffect(Unit) {
-        cartViewModel.sepettekiYemekleriGetir()
+    LaunchedEffect(username) {
+        delay(250)
+        cartViewModel.sepettekiYemekleriGetir(kullaniciAdi ="${username}")
     }
     LaunchedEffect(sepet) {
         sepet.forEach { yemek ->
@@ -99,7 +100,7 @@ fun CartPage(
                 title = { Text("Sepetim", fontWeight = FontWeight.Bold) },
                 navigationIcon = {
                     IconButton(onClick = {
-                        onBack()
+                        navController.popBackStack()
                     }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
@@ -113,13 +114,13 @@ fun CartPage(
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(start = 5.dp, end = 5.dp)
+                        .padding(start = 10.dp, end = 10.dp)
                         .navigationBarsPadding(),
                     shape = RoundedCornerShape(
                         topStart = 10.dp,
                         topEnd = 10.dp,
-                        bottomEnd = 0.dp,
-                        bottomStart = 0.dp)
+                        bottomEnd = 10.dp,
+                        bottomStart = 10.dp)
 
                 ) {
                     Column(
@@ -140,20 +141,23 @@ fun CartPage(
                                 fontSize = 20.sp
                             )
                             Text(
-                                "$totalCartPrice ₺",
+                                "₺$totalCartPrice ",
                                 fontWeight = FontWeight.ExtraBold,
                                 fontSize = 20.sp
                             )
                         }
 
                         Button(
-                            onClick = { /* Siparişi Onayla */ },
+                            onClick = {
+                                //cartViewModel.setTotalCartPrice(totalCartPrice)
+                                navController.navigate("confirmScreen/${totalCartPrice}")
+                            },
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(56.dp),
                             shape = RoundedCornerShape(10.dp),
                             colors = ButtonDefaults.buttonColors(
-                                containerColor = Color(0xFF4CAF50),
+                                containerColor = Color(0xFF79a31b),
                                 contentColor = Color.White
                             ),
                             contentPadding = PaddingValues(0.dp)
@@ -256,15 +260,15 @@ fun CartPage(
                                                 }else{
                                                     val yemekIdInt = yemek.sepetYemekId.toIntOrNull()
                                                     if (yemekIdInt != null) {
-                                                        cartViewModel.yemekSil(yemekIdInt)
+                                                        cartViewModel.yemekSil(yemekIdInt,"${username}")
                                                     }
                                                 }
                                             }, shape = RoundedCornerShape(10.dp),
                                             colors = ButtonDefaults.buttonColors(
                                                 containerColor = if (displayedAdet == 1) {
-                                                    Color.Red
+                                                    Color(0xFFcf3333)
                                                 } else {
-                                                    Color(0xFF4CAF50)
+                                                    Color(0xFF79a31b)
                                                 },
                                                 contentColor = Color.White
                                             ),
@@ -303,7 +307,7 @@ fun CartPage(
                                             },
                                             shape = RoundedCornerShape(10.dp),
                                             colors = ButtonDefaults.buttonColors(
-                                                containerColor = Color(0xFF4CAF50),
+                                                containerColor = Color(0xFF79a31b),
                                                 contentColor = Color.White
                                             ),
                                             contentPadding = PaddingValues(0.dp),

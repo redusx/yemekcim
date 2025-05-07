@@ -86,7 +86,7 @@ fun SepeteEkleDialog(
                         shape = RoundedCornerShape(10.dp),
                         contentPadding = PaddingValues(0.dp),
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = Color(0xFF4CAF50),
+                            containerColor =Color(0xFF79a31b),
                             contentColor = Color.White
                         )
                     ) {
@@ -102,7 +102,7 @@ fun SepeteEkleDialog(
                         shape = RoundedCornerShape(10.dp),
                         contentPadding = PaddingValues(0.dp),
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = Color(0xFF4CAF50),
+                            containerColor = Color(0xFF79a31b),
                             contentColor = Color.White
                         )
                     ) {
@@ -126,7 +126,7 @@ fun SepeteEkleDialog(
                             .weight(1f),
                         shape = RoundedCornerShape(10.dp),
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = Color.Red,
+                            containerColor = Color(0xFFcf3333),
                             contentColor = Color.White
                         )
                     ) {
@@ -142,7 +142,7 @@ fun SepeteEkleDialog(
                             .weight(1f),
                         shape = RoundedCornerShape(10.dp),
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = Color(0xFF4CAF50),
+                            containerColor = Color(0xFF79a31b),
                             contentColor = Color.White
                         )
                     ) {

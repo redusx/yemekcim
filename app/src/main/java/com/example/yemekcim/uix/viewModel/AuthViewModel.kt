@@ -4,15 +4,22 @@ import android.location.Location
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.yemekcim.data.entity.UserEntity
 import com.example.yemekcim.data.repo.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -39,18 +46,16 @@ data class RegisterUiState(
     val errorMessage: String? = null
 )
 
+
 @HiltViewModel
 class AuthViewModel @Inject constructor(
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
 ) : ViewModel() {
-
-    init {
-        checkUserStatus()
-    }
 
     // --- UI State ---
     private val _uiState = MutableStateFlow(LoginUiState())
     val uiState: StateFlow<LoginUiState> = _uiState.asStateFlow()
+
     // --- Login State ---
     private val _loginUiState = MutableStateFlow(LoginUiState())
     val loginUiState: StateFlow<LoginUiState> = _loginUiState.asStateFlow()
@@ -72,6 +77,14 @@ class AuthViewModel @Inject constructor(
     private val _startDestination = MutableStateFlow(StartDestination.LOADING)
     val startDestination: StateFlow<StartDestination> = _startDestination.asStateFlow()
 
+
+
+    init {
+        Log.d("AuthViewModel_LIFECYCLE", "Instance: $this")
+        Log.d("AuthViewModel_DEBUG", "AuthViewModel initialized.")
+        checkUserStatus()
+    }
+
     // --- Event Handlers ---
 
     fun onUsernameChanged(username: String) {
@@ -83,47 +96,35 @@ class AuthViewModel @Inject constructor(
     }
 
     fun onLoginClicked() {
+        Log.d("AuthViewModel_DEBUG", "onLoginClicked CALLED")
         val currentState = _loginUiState.value
-
         if (currentState.username.isBlank() || currentState.password.isBlank()) {
             _loginUiState.update { it.copy(errorMessage = "Kullanıcı adı ve şifre boş olamaz!") }
             return
         }
-
         _loginUiState.update { it.copy(isLoading = true, errorMessage = null) }
-
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val loginSuccess = userRepository.checkLoginCredentials(
                     username = currentState.username,
                     password = currentState.password
                 )
-
                 if (loginSuccess) {
-                    Log.d("AuthViewModel", "Login successful for ${currentState.username}")
+                    Log.d("AuthViewModel_DEBUG", "Login successful for ${currentState.username}")
                     _loginUiState.update { it.copy(isLoading = false) }
                     userAuthenticated()
                     _navigateToMain.tryEmit(Unit)
                 } else {
-                    Log.d("AuthViewModel", "Login failed for ${currentState.username}")
-                    _loginUiState.update {
-                        it.copy(
-                            isLoading = false,
-                            errorMessage = "Kullanıcı adı veya şifre hatalı!"
-                        )
-                    }
+                    Log.d("AuthViewModel_DEBUG", "Login failed for ${currentState.username}")
+                    _loginUiState.update { it.copy(isLoading = false, errorMessage = "Kullanıcı adı veya şifre hatalı!") }
                 }
             } catch (e: Exception) {
-                Log.e("AuthViewModel", "Login error: ${e.localizedMessage}", e)
-                _loginUiState.update {
-                    it.copy(
-                        isLoading = false,
-                        errorMessage = "Giriş sırasında bir hata oluştu. İnternet bağlantınızı kontrol edin veya daha sonra tekrar deneyin."
-                    )
-                }
+                Log.e("AuthViewModel_DEBUG", "Login error: ${e.localizedMessage}", e)
+                _loginUiState.update { it.copy(isLoading = false, errorMessage = "Bir hata oluştu...") }
             }
         }
     }
+
 
     // --- Register Event Handlers ---
     fun onRegisterUsernameChanged(username: String) {
@@ -177,38 +178,34 @@ class AuthViewModel @Inject constructor(
         }
     }
 
-    fun onRegisterNavigationClicked() {
-        _navigateToRegister.tryEmit(Unit)
-    }
-    fun onLoginNavigationClicked() {
-        _navigateToLogin.tryEmit(Unit)
-    }
+    fun onRegisterNavigationClicked() { _navigateToRegister.tryEmit(Unit) }
+    fun onLoginNavigationClicked() { _navigateToLogin.tryEmit(Unit) }
 
     private fun checkUserStatus() {
+        Log.d("AuthViewModel_DEBUG", "checkUserStatus CALLED")
         viewModelScope.launch {
-            // İsteğe bağlı: Çok kısa bir gecikme eklenebilir (splash screen hissi için)
-            delay(500) // Örnek: Yarım saniye
-
+            delay(500)
             try {
                 val hasUser = userRepository.hasRegisteredUser()
                 if (hasUser) {
-                    // Kayıtlı kullanıcı VARSA: Ana Ekrana
-                    // TODO: Daha sonra buraya "giriş yapılmış mı" kontrolü eklenmeli.
-                    _startDestination.value = StartDestination.MAIN
-                    Log.d("AuthViewModel", "User found, navigating to MAIN")
+                    // Kayıtlı kullanıcı VARSA, Login ekranına yönlendir.
+                    // Kullanıcının kim olduğunu bilmiyoruz, login olması lazım.
+                    _startDestination.value = StartDestination.LOGIN
+                    Log.d("AuthViewModel_DEBUG", "User exists, navigating to LOGIN for auth.")
                 } else {
                     // Kayıtlı kullanıcı YOKSA: Kayıt Ekranına
                     _startDestination.value = StartDestination.REGISTER
-                    Log.d("AuthViewModel", "No user found, navigating to REGISTER")
+                    Log.d("AuthViewModel_DEBUG", "No user found, navigating to REGISTER.")
                 }
             } catch (e: Exception) {
-                Log.e("AuthViewModel", "Error checking user status: ${e.message}", e)
+                Log.e("AuthViewModel_DEBUG", "Error checking user status: ${e.message}", e)
                 _startDestination.value = StartDestination.REGISTER
             }
         }
     }
 
     fun userAuthenticated() {
+        Log.d("AuthViewModel_DEBUG", "userAuthenticated CALLED. Setting startDestination to MAIN.")
         _startDestination.value = StartDestination.MAIN
     }
 
@@ -219,4 +216,24 @@ class AuthViewModel @Inject constructor(
     fun dismissRegisterErrorDialog() {
         _registerUiState.update { it.copy(errorMessage = null) }
     }
+
+    //Clear UiState
+    fun clearLoginState() {
+        _loginUiState.value = LoginUiState()
+        Log.d("AuthViewModel", "Login state cleared.")
+    }
+    fun clearRegisterState() {
+        _registerUiState.value = RegisterUiState()
+        Log.d("AuthViewModel", "Register state cleared.")
+    }
+
+    fun logout(onLogoutComplete: () -> Unit) {
+        Log.d("AuthViewModel_DEBUG", "logout CALLED")
+        viewModelScope.launch {
+            _loginUiState.value = LoginUiState()
+            _startDestination.value = StartDestination.LOGIN
+            onLogoutComplete()
+        }
+    }
+
 }

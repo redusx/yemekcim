@@ -28,4 +28,7 @@ interface UserDao {
     @Query("SELECT * FROM user_profile LIMIT 1")
     suspend fun getFirstUser(): UserEntity?
 
+    @Query("SELECT * FROM user_profile WHERE username = :targetUsername LIMIT 1")
+    fun observeUserProfileByUsername(targetUsername: String): Flow<UserEntity?>
+
 }

@@ -1,6 +1,7 @@
 package com.example.yemekcim.data.repo
 
 import android.location.Location
+import android.util.Log
 import com.example.yemekcim.Dao.UserDao
 import com.example.yemekcim.data.entity.UserEntity
 import com.example.yemekcim.utils.HashingUtils
@@ -54,5 +55,11 @@ class UserRepository @Inject constructor(
 
     suspend fun getUserByUsername(username: String): UserEntity? {
         return userDao.getUserByUsername(username)
+    }
+
+    fun getUserProfileFlowForUsername(username: String): Flow<UserEntity?> {
+        Log.d("UserRepository_DEBUG", "getUserProfileFlowForUsername called for: $username")
+
+        return userDao.observeUserProfileByUsername(username)
     }
 }

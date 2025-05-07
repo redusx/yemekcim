@@ -1,5 +1,6 @@
 package com.example.yemekcim.uix.views
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -60,15 +61,26 @@ import com.example.yemekcim.uix.viewModel.MainPageViewModel
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.layout.ContentScale
+import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.example.yemekcim.data.entity.Yemekler
+import com.example.yemekcim.uix.viewModel.AuthViewModel
+import com.example.yemekcim.uix.viewModel.ProfileUiState
+import com.example.yemekcim.uix.viewModel.UserSessionViewModel
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainPage(navController: NavController, mainViewModel: MainPageViewModel) {
+fun MainPage(
+    navController: NavController,
+    mainViewModel: MainPageViewModel,
+    authViewModel: AuthViewModel = hiltViewModel(),
+    userSessionViewModel: UserSessionViewModel = hiltViewModel()
+
+) {
+    val username by userSessionViewModel.usernameFlow.collectAsState(initial = "")
     val yemekler by mainViewModel.yemeklerStateFlow.collectAsState()
-    val userName = "Rıza"
+    Log.d("Page_DEBUG", "Current username in Composable: $username")
     var query = remember { mutableStateOf("") }
     val buttonLabels = listOf("Popüler", "Yemekler", "İçecekler", "Tatlılar", "Dondurmalar")
     var filterButton = remember { mutableStateOf("0") }
@@ -80,6 +92,7 @@ fun MainPage(navController: NavController, mainViewModel: MainPageViewModel) {
     LaunchedEffect(key1 = true) {
         mainViewModel.tumYemekleriGetir()
     }
+
     Scaffold(
         modifier = Modifier
             .windowInsetsPadding(WindowInsets.statusBars)
@@ -98,7 +111,7 @@ fun MainPage(navController: NavController, mainViewModel: MainPageViewModel) {
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
-                    text = "Merhaba, $userName!",
+                    text = "Merhaba, ${username ?: "Misafir"}!",
                     modifier = Modifier
                         .padding(start = 10.dp)
                         .graphicsLayer(alpha = 0.5f)
@@ -239,7 +252,7 @@ fun MainPage(navController: NavController, mainViewModel: MainPageViewModel) {
                 yemek = yemek,
                 onDismiss = { mainViewModel.closeDialog() },
                 onEkle = { adet ->
-                    mainViewModel.sepeteEkle(yemek, adet)
+                    mainViewModel.sepeteEkle(yemek, adet,"${username}")
                 }
             )
         }
@@ -307,7 +320,7 @@ fun YemekKarti(yemek: Yemekler, mainViewModel: MainPageViewModel) {
                 Button(
                     onClick = { mainViewModel.showDialog(yemek) },
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFF4CAF50),
+                        containerColor = Color(0xFF79a31b),
                         contentColor = Color.White
                     ),
                     shape = RoundedCornerShape(10.dp)
