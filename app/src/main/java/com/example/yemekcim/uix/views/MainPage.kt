@@ -131,6 +131,25 @@ fun MainPage(
                     fontFamily = FontFamily(Font(R.font.datang_story))
                 )
             }
+//            TextField(
+//                value = query.value,
+//                onValueChange = { query.value = it },
+//                label = { Text("Arama") },
+//                modifier = Modifier
+//                    .fillMaxWidth()
+//                    .padding(10.dp)
+//                    .clip(RoundedCornerShape(20.dp)),
+//                leadingIcon = {
+//                    Icon(Icons.Default.Search, contentDescription = "Search")
+//                },
+//                singleLine = true,
+//                colors = TextFieldDefaults.textFieldColors(
+//                    containerColor = Color(0xFFe6e7e8),
+//                    focusedLabelColor = Color.Black,
+//                    focusedIndicatorColor = Color.White,
+//                    unfocusedLabelColor = Color.Black,
+//                    unfocusedIndicatorColor = Color.White
+//                )
             TextField(
                 value = query.value,
                 onValueChange = { query.value = it },
@@ -143,12 +162,13 @@ fun MainPage(
                     Icon(Icons.Default.Search, contentDescription = "Search")
                 },
                 singleLine = true,
-                colors = TextFieldDefaults.textFieldColors(
-                    containerColor = Color(0xFFe6e7e8),
-                    focusedLabelColor = Color.Black,
-                    focusedIndicatorColor = Color.White,
-                    unfocusedLabelColor = Color.Black,
-                    unfocusedIndicatorColor = Color.White
+                colors = TextFieldDefaults.colors(
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent,
+                    focusedContainerColor = Color(0xFFe6e7e8),
+                    unfocusedContainerColor = Color(0xFFe6e7e8),
+                    focusedTextColor = Color.Black,
+                    unfocusedTextColor = Color.Black
                 )
             )
             Box(

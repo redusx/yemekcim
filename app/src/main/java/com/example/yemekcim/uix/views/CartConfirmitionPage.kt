@@ -60,7 +60,7 @@ fun CartConfirmScreen(
         Triple(Icons.Default.AccountBalanceWallet, "Kayıtlı Kart", "**** 1234"),
         Triple(Icons.Default.LocationOn, "Konum", "İstanbul / Maltepe"),
         Triple(Icons.Default.Store, "Gönderen Firma", sellerName),
-        Triple(Icons.Default.Timer, "Tahmini Süre", deliveryTime),
+        Triple(Icons.Default.Timer, "Tahmini Teslimat Süresi", deliveryTime),
         Triple(Icons.Default.LocalShipping, "Gönderim Ücreti", "₺${"%.2f".format(deliveryFee)}")
     )
     Scaffold(topBar = {
