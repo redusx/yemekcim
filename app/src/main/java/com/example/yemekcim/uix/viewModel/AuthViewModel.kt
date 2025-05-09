@@ -4,22 +4,15 @@ import android.location.Location
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.yemekcim.data.entity.UserEntity
 import com.example.yemekcim.data.repo.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -51,10 +44,6 @@ data class RegisterUiState(
 class AuthViewModel @Inject constructor(
     private val userRepository: UserRepository,
 ) : ViewModel() {
-
-    // --- UI State ---
-    private val _uiState = MutableStateFlow(LoginUiState())
-    val uiState: StateFlow<LoginUiState> = _uiState.asStateFlow()
 
     // --- Login State ---
     private val _loginUiState = MutableStateFlow(LoginUiState())
@@ -159,7 +148,7 @@ class AuthViewModel @Inject constructor(
                     return@launch
                 }
 
-                // TODO: Konum izni alıp gerçek konumu buraya ekle (veya sonra güncelle)
+                // TODO: Konum izni alıp gerçek konumu buraya ekle
                 val location: Location? = null
                 userRepository.saveOrUpdateUser(
                     username = currentState.username,
@@ -204,7 +193,7 @@ class AuthViewModel @Inject constructor(
         }
     }
 
-    fun userAuthenticated() {
+    private fun userAuthenticated() {
         Log.d("AuthViewModel_DEBUG", "userAuthenticated CALLED. Setting startDestination to MAIN.")
         _startDestination.value = StartDestination.MAIN
     }

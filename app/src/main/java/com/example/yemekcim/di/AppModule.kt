@@ -3,8 +3,6 @@ package com.example.yemekcim.di
 import android.content.Context
 import android.net.ConnectivityManager
 import com.example.yemekcim.data.local.DataStoreManager
-//import com.example.yemekcim.data.datasource.YemeklerDataSource
-import com.example.yemekcim.data.repo.YemeklerRepository
 import com.example.yemekcim.retrofit.YemeklerDao
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder

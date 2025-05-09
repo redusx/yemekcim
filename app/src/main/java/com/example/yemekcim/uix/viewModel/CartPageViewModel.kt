@@ -18,9 +18,6 @@ class CartPageViewModel @Inject constructor(private val repo: YemeklerRepository
     private val _sepetListesi = mutableStateOf<List<SepetYemek>>(emptyList())
     val sepetListesi: State<List<SepetYemek>> = _sepetListesi
 
-    private val _totalCartPrice = mutableStateOf(0)
-    val totalCartPrice: State<Int> = _totalCartPrice
-
     fun sepettekiYemekleriGetir(kullaniciAdi:String) {
         viewModelScope.launch {
             try {
@@ -50,10 +47,6 @@ class CartPageViewModel @Inject constructor(private val repo: YemeklerRepository
                 Log.e("ViewModel", "yemekSil sırasında genel hata: ${e.localizedMessage}", e)
             }
         }
-    }
-
-    fun setTotalCartPrice(value: Int) {
-        _totalCartPrice.value = value
     }
 
 }

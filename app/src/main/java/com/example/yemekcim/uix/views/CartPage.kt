@@ -42,7 +42,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
@@ -68,7 +68,7 @@ fun CartPage(
 
     LaunchedEffect(username) {
         delay(250)
-        cartViewModel.sepettekiYemekleriGetir(kullaniciAdi ="${username}")
+        cartViewModel.sepettekiYemekleriGetir(kullaniciAdi ="$username")
     }
     LaunchedEffect(sepet) {
         sepet.forEach { yemek ->
@@ -78,7 +78,7 @@ fun CartPage(
                 displayedQuantities[yemekId] = apiQuantity
             }
         }
-        val currentKeys = sepet.map { it.sepetYemekId }.toSet() ?: emptySet()
+        val currentKeys = sepet.map { it.sepetYemekId }.toSet()
         if (displayedQuantities.keys.retainAll(currentKeys)) {
             println("Map cleaned. Remaining keys: ${displayedQuantities.keys}")
         }
@@ -149,7 +149,6 @@ fun CartPage(
 
                         Button(
                             onClick = {
-                                //cartViewModel.setTotalCartPrice(totalCartPrice)
                                 navController.navigate("confirmScreen/${totalCartPrice}")
                             },
                             modifier = Modifier
@@ -195,16 +194,16 @@ fun CartPage(
                 LazyColumn(
                     modifier = Modifier.fillMaxSize()
                 ) {
-                    items(sepet!!, key = { it.sepetYemekId }) { yemek ->
+                    items(sepet, key = { it.sepetYemekId }) { yemek ->
                         var displayedAdet by remember(yemek.sepetYemekId) {
-                            mutableStateOf(
+                            mutableIntStateOf(
                                 displayedQuantities[yemek.sepetYemekId]
                                     ?: yemek.yemekSiparisAdet.toIntOrNull() ?: 0
                             )
                         }
 
                         val basePrice = yemek.yemekFiyat.toIntOrNull() ?: 0
-                        var totalPriceForEach = basePrice * displayedAdet
+                        val totalPriceForEach = basePrice * displayedAdet
                         Card(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -260,7 +259,7 @@ fun CartPage(
                                                 }else{
                                                     val yemekIdInt = yemek.sepetYemekId.toIntOrNull()
                                                     if (yemekIdInt != null) {
-                                                        cartViewModel.yemekSil(yemekIdInt,"${username}")
+                                                        cartViewModel.yemekSil(yemekIdInt,"$username")
                                                     }
                                                 }
                                             }, shape = RoundedCornerShape(10.dp),
@@ -291,7 +290,7 @@ fun CartPage(
                                             }
                                         }
                                         Text(
-                                            text = "${displayedAdet}",
+                                            text = "$displayedAdet",
                                             fontWeight = FontWeight.Bold,
                                             fontSize = 27.sp,
                                             modifier = Modifier

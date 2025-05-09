@@ -18,10 +18,9 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.MenuBook
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -62,7 +61,7 @@ fun ProfilePage(
         Triple(Icons.Default.LocationOn, "Konum", "İstanbul / Maltepe"),
         Triple(Icons.Default.Receipt, "Siparişlerim", ""),
         Triple(Icons.Default.SupportAgent, "Yardım Merkezi", ""),
-        Triple(Icons.Default.MenuBook, "Kullanım Koşulları Ve Veri Politikası", ""),
+        Triple(Icons.AutoMirrored.Filled.MenuBook, "Kullanım Koşulları Ve Veri Politikası", ""),
 
         )
 
@@ -132,7 +131,7 @@ fun ProfilePage(
                                     Text(text = detail, color = Color.Gray, fontSize = 16.sp)}
                                 }
                             }
-                            Divider()
+                            HorizontalDivider()
                         }
                     }
                     Button(

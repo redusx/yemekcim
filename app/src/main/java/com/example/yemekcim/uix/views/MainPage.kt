@@ -30,7 +30,6 @@ import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -64,29 +63,25 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.example.yemekcim.data.entity.Yemekler
-import com.example.yemekcim.uix.viewModel.AuthViewModel
-import com.example.yemekcim.uix.viewModel.ProfileUiState
 import com.example.yemekcim.uix.viewModel.UserSessionViewModel
 
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainPage(
     navController: NavController,
     mainViewModel: MainPageViewModel,
-    authViewModel: AuthViewModel = hiltViewModel(),
     userSessionViewModel: UserSessionViewModel = hiltViewModel()
 
 ) {
     val username by userSessionViewModel.usernameFlow.collectAsState(initial = "")
     val yemekler by mainViewModel.yemeklerStateFlow.collectAsState()
     Log.d("Page_DEBUG", "Current username in Composable: $username")
-    var query = remember { mutableStateOf("") }
+    val query = remember { mutableStateOf("") }
     val buttonLabels = listOf("Popüler", "Yemekler", "İçecekler", "Tatlılar", "Dondurmalar")
-    var filterButton = remember { mutableStateOf("0") }
+    val filterButton = remember { mutableStateOf("0") }
     val seciliKategoriYemekler =
         mainViewModel.kategoriyeGoreYemekler[filterButton.value] ?: listOf()
-    var contextName = buttonLabels[filterButton.value.toInt()]
+    val contextName = buttonLabels[filterButton.value.toInt()]
     val seciliYemek by mainViewModel.dialogState
 
     LaunchedEffect(key1 = true) {
@@ -131,25 +126,6 @@ fun MainPage(
                     fontFamily = FontFamily(Font(R.font.datang_story))
                 )
             }
-//            TextField(
-//                value = query.value,
-//                onValueChange = { query.value = it },
-//                label = { Text("Arama") },
-//                modifier = Modifier
-//                    .fillMaxWidth()
-//                    .padding(10.dp)
-//                    .clip(RoundedCornerShape(20.dp)),
-//                leadingIcon = {
-//                    Icon(Icons.Default.Search, contentDescription = "Search")
-//                },
-//                singleLine = true,
-//                colors = TextFieldDefaults.textFieldColors(
-//                    containerColor = Color(0xFFe6e7e8),
-//                    focusedLabelColor = Color.Black,
-//                    focusedIndicatorColor = Color.White,
-//                    unfocusedLabelColor = Color.Black,
-//                    unfocusedIndicatorColor = Color.White
-//                )
             TextField(
                 value = query.value,
                 onValueChange = { query.value = it },
@@ -235,7 +211,7 @@ fun MainPage(
                     .padding(start = 10.dp)
             ) {
                 Text(
-                    text = "$contextName",
+                    text = contextName,
                     fontSize = 24.sp,
                     fontWeight = FontWeight.Bold,
                 )
@@ -272,7 +248,7 @@ fun MainPage(
                 yemek = yemek,
                 onDismiss = { mainViewModel.closeDialog() },
                 onEkle = { adet ->
-                    mainViewModel.sepeteEkle(yemek, adet,"${username}")
+                    mainViewModel.sepeteEkle(yemek, adet,"$username")
                 }
             )
         }

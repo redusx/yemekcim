@@ -1,7 +1,5 @@
 package com.example.yemekcim.uix.viewModel
 
-import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.yemekcim.data.local.DataStoreManager
@@ -23,9 +21,9 @@ class UserSessionViewModel @Inject constructor(
         }
     }
 
-    fun clearUsername() {
-        viewModelScope.launch {
-            dataStoreManager.clearUsername()
-        }
-    }
+//    fun clearUsername() {
+//        viewModelScope.launch {
+//            dataStoreManager.clearUsername()
+//        }
+//    }
 }

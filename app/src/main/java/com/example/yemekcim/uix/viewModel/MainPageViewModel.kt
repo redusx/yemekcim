@@ -14,8 +14,6 @@ import androidx.lifecycle.viewModelScope
 import com.example.yemekcim.data.entity.Yemekler
 import com.example.yemekcim.data.repo.YemeklerRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -55,6 +53,7 @@ class MainPageViewModel @Inject constructor(
     // Hata durumu
     private val _hata = MutableStateFlow<String?>(null)
     val hata: StateFlow<String?> = _hata.asStateFlow()
+
     private val _isConnected = MutableStateFlow(false)
     val isConnected: StateFlow<Boolean> = _isConnected.asStateFlow()
 

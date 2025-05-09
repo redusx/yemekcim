@@ -3,7 +3,6 @@ package com.example.yemekcim.retrofit
 import com.example.yemekcim.data.entity.CRUDanswer
 import com.example.yemekcim.data.entity.SepetYemekCevap
 import com.example.yemekcim.data.entity.YemeklerCevap
-import retrofit2.Call
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
@@ -35,6 +34,7 @@ interface YemeklerDao {
         @Field("kullanici_adi") kullaniciAdi: String
     ): SepetYemekCevap
 
+    //Sepetten yemek sil
     @FormUrlEncoded
     @POST("yemekler/sepettenYemekSil.php")
     suspend fun sepettenYemekSil(

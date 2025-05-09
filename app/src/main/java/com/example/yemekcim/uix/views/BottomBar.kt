@@ -1,6 +1,5 @@
 package com.example.yemekcim.uix.views
 
-import android.graphics.Color
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -19,36 +18,20 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
-import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.yemekcim.R
-import androidx.navigation.compose.rememberNavController
 import com.example.yemekcim.data.entity.NavigationItem
-import com.example.yemekcim.uix.viewModel.MainPageViewModel
 import com.example.yemekcim.uix.viewModel.StartDestination
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
-
-object BottomNavRoutes {
-    const val HOME = "home_route"
-    const val CART = "cart_route"
-    const val PROFILE = "profile_route"
-}
 
 @Composable
 fun BottomBar(navController: NavController) {
@@ -129,10 +112,10 @@ fun BottomBar(navController: NavController) {
                 },
                 colors = NavigationBarItemDefaults.colors(
                     indicatorColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.6f),
-                    selectedIconColor = MaterialTheme.colorScheme.onPrimaryContainer, // Seçili ikon rengi
-                    unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant, // Seçili olmayan ikon
-                    selectedTextColor = MaterialTheme.colorScheme.onSurface, // Seçili label rengi (label varsa)
-                    unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant // Seçili olmayan label rengi
+                    selectedIconColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                    unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                    selectedTextColor = MaterialTheme.colorScheme.onSurface,
+                    unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             )
         }
